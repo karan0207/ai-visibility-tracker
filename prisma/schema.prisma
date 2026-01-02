@@ -1,0 +1,91 @@
+// Prisma Schema for AI Visibility Tracker
+// Run: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Analysis {
+  id        String      @id @default(cuid())
+  category  String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
+  brands    Brand[]
+  prompts   PromptRun[]
+  citations Citation[]
+
+  @@index([createdAt])
+}
+
+model Brand {
+  id              String    @id @default(cuid())
+  name            String
+  // Core metrics (new framework)
+  promptCoverage  Float     @default(0)  // % of prompts where mentioned (PRIMARY)
+  mentionShare    Float     @default(0)  // % of total mentions
+  mentionsPerPrompt Float   @default(0)  // Avg mentions per prompt appeared
+  firstMentionRate Float    @default(0)  // % of appearances mentioned first
+  missedPrompts   Int       @default(0)  // Count of prompts NOT mentioned
+  promptsWithBrand Int      @default(0)  // Count of prompts where appeared
+  // Raw counts
+  mentions        Int       @default(0)  // Total mention count
+  firstMentions   Int       @default(0)  // Times mentioned first
+  // Legacy (keep for compatibility)
+  visibility      Float     @default(0)  // Alias for promptCoverage
+  citationShare   Float     @default(0)  // Alias for mentionShare
+  
+  analysisId      String
+  analysis        Analysis  @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  mentionRefs     Mention[]
+
+  @@index([analysisId])
+}
+
+model PromptRun {
+  id              String    @id @default(cuid())
+  prompt          String
+  response        String    @db.Text
+  brandsMentioned String[]
+  firstMention    String?
+  createdAt       DateTime  @default(now())
+  
+  analysisId      String
+  analysis        Analysis  @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  mentions        Mention[]
+
+  @@index([analysisId])
+}
+
+model Mention {
+  id          String    @id @default(cuid())
+  count       Int
+  context     String?   @db.Text
+  position    Int?      // Position of first mention in response
+  
+  brandId     String
+  brand       Brand     @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  promptRunId String
+  promptRun   PromptRun @relation(fields: [promptRunId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+  @@index([promptRunId])
+}
+
+model Citation {
+  id         String   @id @default(cuid())
+  url        String
+  domain     String
+  count      Int      @default(1)
+  
+  analysisId String
+  analysis   Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId])
+  @@index([domain])
+}

@@ -130,7 +130,7 @@ export function AnalysisForm({ onSubmit, isLoading }: AnalysisFormProps) {
                 className="h-11 px-4 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
               />
               <p className="text-xs text-slate-500">
-                Your key is not stored. Using Ollama? Leave blank.
+                Your key is not stored.
               </p>
             </div>
           </details>

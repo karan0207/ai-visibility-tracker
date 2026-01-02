@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
     const { category, brands, apiKey } = validation.data;
 
-    // Create AI client (OpenAI or Ollama)
+    // Create AI client
     let client;
     try {
       client = createAIClient(apiKey);

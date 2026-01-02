@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import type { ChatMessage } from '@/types/analysis';
+import { within as rtlWithin } from '@testing-library/react';
 
 jest.mock('lucide-react', () => ({
   Send: () => <span data-testid="send-icon">Send</span>,
@@ -30,7 +31,7 @@ describe('ChatInterface', () => {
   it('shows empty state with brands', () => {
     render(<ChatInterface {...baseProps} />);
     expect(screen.getByText(/start your analysis/i)).toBeInTheDocument();
-    expect(screen.getByText('Brand1')).toBeInTheDocument();
+    expect(within(screen.getByTestId('tracked-brands')).getByText('Brand1')).toBeInTheDocument();
   });
 
   it('submits prompt on click', async () => {
@@ -58,7 +59,11 @@ describe('ChatInterface', () => {
     ];
 
     render(<ChatInterface {...baseProps} messages={messages} />);
-    expect(screen.getByText('Q')).toBeInTheDocument();
-    expect(screen.getByText('A')).toBeInTheDocument();
+    expect(within(screen.getByTestId('message-1')).getByText('Q')).toBeInTheDocument();
+    expect(within(screen.getByTestId('message-2')).getByText('A')).toBeInTheDocument();
   });
 });
+function within(element: HTMLElement) {
+  return rtlWithin(element);
+}
+

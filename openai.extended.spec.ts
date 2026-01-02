@@ -38,6 +38,7 @@ describe('openai service - extended coverage', () => {
     it('creates xAI client when provider is xai', () => {
       process.env.AI_PROVIDER = 'xai';
       process.env.XAI_API_KEY = 'xai-test-key';
+
       createAIClient();
       expect(OpenAI).toHaveBeenCalledWith({ 
         baseURL: 'https://api.x.ai/v1', 
@@ -48,22 +49,38 @@ describe('openai service - extended coverage', () => {
     it('throws when xAI key missing', () => {
       process.env.AI_PROVIDER = 'xai';
       delete process.env.XAI_API_KEY;
+
       expect(() => createAIClient()).toThrow('XAI_API_KEY is required');
     });
 
     it('creates Google client when provider is google', () => {
       process.env.AI_PROVIDER = 'google';
       process.env.GOOGLE_API_KEY = 'google-test-key';
-      createAIClient();
+      // Ollama support removed
+      // Ollama support removed
+      // Ollama support removed
+    it('ignores placeholder API key', () => {
+      process.env.AI_PROVIDER = 'ollama';
+      
+      createAIClient('sk-your-openai-api-key-here');
       expect(OpenAI).toHaveBeenCalledWith({ 
-        baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/', 
-        apiKey: 'google-test-key' 
+        baseURL: expect.any(String), 
+        apiKey: 'ollama' 
       });
+    });
+
+    it('uses custom Ollama model from env', () => {
+      process.env.AI_PROVIDER = 'ollama';
+      process.env.OLLAMA_MODEL = 'mistral';
+
+      const info = getAIProviderInfo();
+      expect(info.model).toBe('mistral');
     });
 
     it('uses custom Google model from env', () => {
       process.env.AI_PROVIDER = 'google';
       process.env.GOOGLE_MODEL = 'gemini-pro';
+
       const info = getAIProviderInfo();
       expect(info.model).toBe('gemini-pro');
     });
@@ -71,6 +88,7 @@ describe('openai service - extended coverage', () => {
     it('uses custom xAI model from env', () => {
       process.env.AI_PROVIDER = 'xai';
       process.env.XAI_MODEL = 'grok-2';
+
       const info = getAIProviderInfo();
       expect(info.model).toBe('grok-2');
     });
@@ -79,25 +97,24 @@ describe('openai service - extended coverage', () => {
       process.env.AI_PROVIDER = 'openai';
       process.env.OPENAI_MODEL = 'gpt-4-turbo';
       process.env.OPENAI_API_KEY = 'sk-test';
+
       const info = getAIProviderInfo();
       expect(info.model).toBe('gpt-4-turbo');
     });
   });
 
-  describe('queryAI - additional error handling', () => {
-    // Removed Ollama support and fixed misplaced await
-
-    it('handles 404 model not found error', async () => {
-      const apiError = new OpenAI.APIError(404, { message: 'model not found' }, 'Not Found', new Headers());
-      const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
-      (instance.chat.completions.create as jest.Mock).mockRejectedValue(apiError);
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('not found');
-    });
+  it('handles 404 not found error', async () => {
+    // Ollama support removed
+    const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
+    (instance.chat.completions.create as jest.Mock).mockRejectedValue(new OpenAI.APIError(404, { message: 'not found' }, 'Not Found', new Headers()));
+    await expect(queryAI(instance, 'prompt')).rejects.toThrow('not found');
+  });
 
     it('handles 429 rate limit error', async () => {
       const apiError = new OpenAI.APIError(429, { message: 'rate limit' }, 'Too Many Requests', new Headers());
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockRejectedValue(apiError);
+
       await expect(queryAI(instance, 'prompt')).rejects.toThrow('Rate limit exceeded');
     });
 
@@ -146,6 +163,7 @@ describe('openai service - extended coverage', () => {
     it('returns xAI info', () => {
       process.env.AI_PROVIDER = 'xai';
       process.env.XAI_MODEL = 'grok-4-latest';
+
       const info = getAIProviderInfo();
       expect(info.provider).toBe('xAI (Grok)');
       expect(info.model).toBe('grok-4-latest');
@@ -154,25 +172,17 @@ describe('openai service - extended coverage', () => {
     it('returns Google info', () => {
       process.env.AI_PROVIDER = 'google';
       process.env.GOOGLE_MODEL = 'gemini-2.5-flash';
+
       const info = getAIProviderInfo();
       expect(info.provider).toBe('Google (Gemini)');
       expect(info.model).toBe('gemini-2.5-flash');
     });
 
-    it('returns OpenAI info', () => {
-      process.env.AI_PROVIDER = 'openai';
-      process.env.OPENAI_MODEL = 'gpt-4o';
-      process.env.OPENAI_API_KEY = 'sk-test';
-      const info = getAIProviderInfo();
-      expect(info.provider).toBe('OpenAI');
-      expect(info.model).toBe('gpt-4o');
-    });
-
-    it('defaults to Google when no provider set', () => {
+    it('defaults to Ollama when no provider set', () => {
       delete process.env.AI_PROVIDER;
+
       const info = getAIProviderInfo();
-      expect(info.provider).toBe('Google (Gemini)');
-      expect(info.model).toBe('gemini-2.5-flash');
+      expect(info.provider).toBe('Ollama (Local)');
     });
   });
 });

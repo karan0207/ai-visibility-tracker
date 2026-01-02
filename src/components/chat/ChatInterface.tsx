@@ -65,7 +65,7 @@ export function ChatInterface({
           </div>
         )}
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 pb-6 sm:pb-6 space-y-4 sm:space-y-5 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]">
+        <div data-testid="messages-area" className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 pb-6 sm:pb-6 space-y-4 sm:space-y-5 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
               <div className="p-5 rounded-full bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30 mb-6">
@@ -78,7 +78,7 @@ export function ChatInterface({
                 Ask questions about your brands. We&apos;ll track mentions and update metrics in real-time.
               </p>
               {brands.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-8 justify-center">
+                <div data-testid="tracked-brands" className="flex flex-wrap gap-2 mt-8 justify-center">
                   {brands.map((brand) => (
                     <Badge key={brand} variant="secondary" className="text-xs px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border-0 font-medium">
                       ✓ {brand}
@@ -239,7 +239,7 @@ function MessageBubble({ message, brands }: MessageBubbleProps) {
   const isUser = message.role === 'user';
 
   return (
-    <div className={`flex gap-3 items-end group ${isUser ? 'flex-row-reverse' : ''}`}>
+    <div data-testid={`message-${message.id}`} className={`flex gap-3 items-end group ${isUser ? 'flex-row-reverse' : ''}`}>
       <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${
         isUser 
           ? 'bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800' 
@@ -252,7 +252,7 @@ function MessageBubble({ message, brands }: MessageBubbleProps) {
         )}
       </div>
       <div className={`flex-1 max-w-[85%] ${isUser ? 'flex flex-col items-end' : 'flex flex-col items-start'}`}>
-        <div className={`text-sm leading-relaxed max-w-prose ${
+        <div data-testid={`message-content-${message.id}`} className={`text-sm leading-relaxed max-w-prose ${
           isUser 
             ? 'bg-indigo-600 text-white rounded-3xl rounded-br-sm px-4 py-2.5 shadow-sm' 
             : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-3xl rounded-bl-sm px-5 py-3 shadow-sm'

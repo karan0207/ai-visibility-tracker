@@ -10,6 +10,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import type { ChatMessage } from '@/types/analysis';
+import { within as rtlWithin } from '@testing-library/react';
 
 jest.mock('lucide-react', () => ({
   Send: () => <span data-testid="send-icon">Send</span>,
@@ -37,9 +38,9 @@ describe('ChatInterface - extended coverage', () => {
     it('displays all tracked brands in empty state', () => {
       render(<ChatInterface {...baseProps} brands={['Alpha', 'Beta', 'Gamma']} />);
       
-      expect(screen.getByText('Alpha')).toBeInTheDocument();
-      expect(screen.getByText('Beta')).toBeInTheDocument();
-      expect(screen.getByText('Gamma')).toBeInTheDocument();
+      expect(within(screen.getByTestId('tracked-brands')).getByText('Alpha')).toBeInTheDocument();
+      expect(within(screen.getByTestId('tracked-brands')).getByText('Beta')).toBeInTheDocument();
+      expect(within(screen.getByTestId('tracked-brands')).getByText('Gamma')).toBeInTheDocument();
     });
 
     it('shows start analysis prompt when no messages', () => {
@@ -76,10 +77,9 @@ describe('ChatInterface - extended coverage', () => {
 
       render(<ChatInterface {...baseProps} messages={messages} />);
       
-      const texts = screen.getAllByText(/First|Second|Third/);
-      expect(texts[0]).toHaveTextContent('First');
-      expect(texts[1]).toHaveTextContent('Second');
-      expect(texts[2]).toHaveTextContent('Third');
+      expect(within(screen.getByTestId('message-1')).getByText('First')).toBeInTheDocument();
+      expect(within(screen.getByTestId('message-2')).getByText('Second')).toBeInTheDocument();
+      expect(within(screen.getByTestId('message-3')).getByText('Third')).toBeInTheDocument();
     });
 
     it('displays message metrics when available', () => {
@@ -97,7 +97,7 @@ describe('ChatInterface - extended coverage', () => {
       ];
 
       render(<ChatInterface {...baseProps} messages={messages} />);
-      expect(screen.getByText('Response mentioning Brand1')).toBeInTheDocument();
+      expect(within(screen.getByTestId('message-1')).getByText('Response mentioning Brand1')).toBeInTheDocument();
     });
   });
 
@@ -196,7 +196,7 @@ describe('ChatInterface - extended coverage', () => {
       ];
 
       render(<ChatInterface {...baseProps} messages={messages} />);
-      expect(screen.getByText(longContent)).toBeInTheDocument();
+      expect(within(screen.getByTestId('message-1')).getByText(longContent)).toBeInTheDocument();
     });
 
     it('handles many messages', () => {
@@ -208,7 +208,11 @@ describe('ChatInterface - extended coverage', () => {
       }));
 
       render(<ChatInterface {...baseProps} messages={messages} />);
-      expect(screen.getByText('Message 49')).toBeInTheDocument();
+      expect(within(screen.getByTestId('message-49')).getByText('Message 49')).toBeInTheDocument();
     });
   });
 });
+function within(element: HTMLElement) {
+  return rtlWithin(element);
+}
+

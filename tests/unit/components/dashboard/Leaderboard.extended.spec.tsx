@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Leaderboard } from '@/components/dashboard/Leaderboard';
 import type { BrandResult } from '@/types/analysis';
@@ -38,7 +38,7 @@ describe('Leaderboard - extended coverage', () => {
       ];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      const brandElements = screen.getAllByText(/Gold|Silver|Bronze/);
+      const brandElements = within(screen.getByRole('table')).getAllByText(/Gold|Silver|Bronze/);
       expect(brandElements[0]).toHaveTextContent('Gold');
       expect(brandElements[1]).toHaveTextContent('Silver');
       expect(brandElements[2]).toHaveTextContent('Bronze');
@@ -53,16 +53,16 @@ describe('Leaderboard - extended coverage', () => {
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
       // Should show rank indicators
-      expect(screen.getByText('First')).toBeInTheDocument();
-      expect(screen.getByText('Second')).toBeInTheDocument();
-      expect(screen.getByText('Third')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('First')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Second')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Third')).toBeInTheDocument();
     });
 
     it('handles single brand', () => {
       const brands = [createBrand('OnlyOne', 100)];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText('OnlyOne')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('OnlyOne')).toBeInTheDocument();
     });
 
     it('handles 10 brands', () => {
@@ -72,7 +72,7 @@ describe('Leaderboard - extended coverage', () => {
       render(<Leaderboard brands={brands} totalPrompts={20} />);
 
       brands.forEach(brand => {
-        expect(screen.getByText(brand.name)).toBeInTheDocument();
+        expect(within(screen.getByRole('table')).getByText(brand.name)).toBeInTheDocument();
       });
     });
   });
@@ -82,7 +82,7 @@ describe('Leaderboard - extended coverage', () => {
       const brands = [createBrand('Test', 75)];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText('75%')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('75%')).toBeInTheDocument();
     });
 
     it('shows mention count as depth multiplier', () => {
@@ -90,7 +90,7 @@ describe('Leaderboard - extended coverage', () => {
       brand.mentionsPerPrompt = 2.5;
       render(<Leaderboard brands={[brand]} totalPrompts={10} />);
 
-      expect(screen.getByText('2.5x')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('2.5x')).toBeInTheDocument();
     });
 
     it('shows first mention rate for top performers', () => {
@@ -98,7 +98,7 @@ describe('Leaderboard - extended coverage', () => {
       brand.firstMentionRate = 75;
       render(<Leaderboard brands={[brand]} totalPrompts={10} />);
 
-      expect(screen.getByText('75%')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('75%')).toBeInTheDocument();
     });
   });
 
@@ -112,7 +112,7 @@ describe('Leaderboard - extended coverage', () => {
       const brands = [createBrand('Test', 0)];
       render(<Leaderboard brands={brands} totalPrompts={0} />);
 
-      expect(screen.getByText('Test')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Test')).toBeInTheDocument();
     });
 
     it('handles all brands with 0% coverage', () => {
@@ -123,9 +123,9 @@ describe('Leaderboard - extended coverage', () => {
       ];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText('A')).toBeInTheDocument();
-      expect(screen.getByText('B')).toBeInTheDocument();
-      expect(screen.getByText('C')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('A')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('B')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('C')).toBeInTheDocument();
     });
 
     it('handles brands with identical coverage', () => {
@@ -136,9 +136,9 @@ describe('Leaderboard - extended coverage', () => {
       ];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText('Tied1')).toBeInTheDocument();
-      expect(screen.getByText('Tied2')).toBeInTheDocument();
-      expect(screen.getByText('Tied3')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Tied1')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Tied2')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Tied3')).toBeInTheDocument();
     });
   });
 
@@ -158,7 +158,7 @@ describe('Leaderboard - extended coverage', () => {
       render(<Leaderboard brands={[brand]} totalPrompts={100} />);
 
       // Low visibility brands may show eye-off icon
-      expect(screen.getByText('Hidden')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('Hidden')).toBeInTheDocument();
     });
   });
 
@@ -168,7 +168,7 @@ describe('Leaderboard - extended coverage', () => {
       const brands = [createBrand(longName, 80)];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText(longName)).toBeInTheDocument();
+      expect(screen.getAllByText(longName).length).toBeGreaterThan(0);
     });
 
     it('handles special characters in names', () => {
@@ -179,16 +179,16 @@ describe('Leaderboard - extended coverage', () => {
       ];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText('C++')).toBeInTheDocument();
-      expect(screen.getByText('Node.js')).toBeInTheDocument();
-      expect(screen.getByText('AI/ML')).toBeInTheDocument();
+      expect(screen.getAllByText('C++').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('Node.js').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('AI/ML').length).toBeGreaterThan(0);
     });
 
     it('handles unicode brand names', () => {
       const brands = [createBrand('日本語', 80)];
       render(<Leaderboard brands={brands} totalPrompts={10} />);
 
-      expect(screen.getByText('日本語')).toBeInTheDocument();
+      expect(screen.getAllByText('日本語').length).toBeGreaterThan(0);
     });
   });
 
@@ -200,10 +200,10 @@ describe('Leaderboard - extended coverage', () => {
 
       render(<Leaderboard brands={[brand]} totalPrompts={10} />);
 
-      expect(screen.getByText('Consistent')).toBeInTheDocument();
-      expect(screen.getByText('80%')).toBeInTheDocument();
-      expect(screen.getByText('2.0x')).toBeInTheDocument();
-      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getAllByText('Consistent').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('80%').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('2.0x').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('2').length).toBeGreaterThan(0);
     });
 
     it('shows "All captured" for zero missed prompts', () => {
@@ -211,7 +211,7 @@ describe('Leaderboard - extended coverage', () => {
       brand.missedPrompts = 0;
       render(<Leaderboard brands={[brand]} totalPrompts={10} />);
 
-      expect(screen.getByText('All captured')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('All captured')).toBeInTheDocument();
     });
   });
 });

@@ -41,13 +41,7 @@ describe('openai service', () => {
       expect(client).toBeDefined();
     });
 
-    it('creates Ollama client when provider is ollama', () => {
-      process.env.AI_PROVIDER = 'ollama';
-      process.env.OLLAMA_BASE_URL = 'http://localhost:11434';
-
-      createAIClient();
-      expect(OpenAI).toHaveBeenCalledWith({ baseURL: 'http://localhost:11434/v1', apiKey: 'ollama' });
-    });
+    // Ollama support removed
 
     it('throws when OpenAI key missing', () => {
       process.env.AI_PROVIDER = 'openai';
@@ -56,12 +50,7 @@ describe('openai service', () => {
       expect(() => createAIClient()).toThrow('OpenAI API key is required');
     });
 
-    it('prefers user key even if provider is ollama', () => {
-      process.env.AI_PROVIDER = 'ollama';
-
-      createAIClient('sk-user');
-      expect(OpenAI).toHaveBeenCalledWith({ apiKey: 'sk-user' });
-    });
+    // Ollama support removed
   });
 
   describe('queryAI', () => {
@@ -90,23 +79,11 @@ describe('openai service', () => {
       await expect(queryAI(instance, 'prompt')).rejects.toThrow('Invalid API key');
     });
 
-    it('handles connection refused for Ollama', async () => {
-      const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
-      (instance.chat.completions.create as jest.Mock).mockRejectedValue(new Error('ECONNREFUSED'));
-
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('Cannot connect to Ollama');
-    });
+    // Ollama support removed
   });
 
   describe('getAIProviderInfo', () => {
-    it('returns Ollama info', () => {
-      process.env.AI_PROVIDER = 'ollama';
-      process.env.OLLAMA_MODEL = 'llama3.2';
-
-      const info = getAIProviderInfo();
-      expect(info.provider).toBe('Ollama (Local)');
-      expect(info.model).toBe('llama3.2');
-    });
+    // Ollama support removed
 
     it('returns OpenAI info', () => {
       process.env.AI_PROVIDER = 'openai';

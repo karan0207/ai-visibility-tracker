@@ -23,7 +23,7 @@ It's not about claiming "we're winning." It's about understanding **how AI perce
 - 🏆 **Compare Competitors** – See who's winning the AI attention war
 - 📜 **Review History** – Look back at past prompts and see what changed
 - 🔗 **Follow Citations** – See which sources influence AI's recommendations
-- 🤖 **Switch AI Models** – Use GPT-4o, Gemini, xAI (Grok), or Claude
+- 🤖 **Switch AI Models** – Use GPT-4o, Gemini, xAI (Grok), or Claude (I recommend Google Gemini for now)
 
 ## 🛠️ What's Under the Hood
 
@@ -54,8 +54,9 @@ docker-compose up -d
 
 # 3. Set up your environment
 cp .env.example .env
-# Edit .env and add your AI provider and API key
-# We recommend Google Gemini for a good balance of speed and quality
+# Edit .env and add your Gemini API key
+# Keep the database URL same as it is
+# I recommend Google Gemini key in .env file for a good balance of speed and quality
 
 # 4. Set up the database
 npm run db:generate
@@ -187,7 +188,7 @@ When adding features or metrics, ask yourself:
 
 > **Rule of thumb**: Optimize for decision-making, not vanity numbers.
 
-We welcome pull requests, issues, and ideas! 🎉
+I welcome pull requests, issues, and ideas! 🎉
 
 ## 🚀 What's Coming Next
 
@@ -200,7 +201,7 @@ We have big plans for AI Visibility Tracker. Here's what we're working on:
 - ⏰ **Scheduled Checks** – Automated periodic analysis
 - 🔔 **Smart Alerts** – Get notified when visibility shifts
 
-Have ideas? We'd love to hear them!
+Have ideas? I would love to hear them!
 
 ## 🔌 API Endpoints
 
@@ -219,18 +220,3 @@ All endpoints are REST APIs. Here's what's available:
 - `POST /api/analyze-stream` – Streaming batch with real-time updates
 
 See the source code in `src/app/api/` for full details and examples.
-
-## License
-
-MIT
-
-## Deploy on Vercel
-
-The easiest way to deploy is using [Vercel](https://vercel.com):
-
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add environment variables (DATABASE_URL, OPENAI_API_KEY)
-4. Deploy!
-
-For database, use [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) or [Neon](https://neon.tech/) for a managed PostgreSQL instance.

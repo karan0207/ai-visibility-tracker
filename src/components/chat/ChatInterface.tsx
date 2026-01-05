@@ -124,7 +124,7 @@ export function ChatInterface({
           {/* Input Area */}
           <div className="px-6 sm:px-8 pb-6 pt-4 bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800">
             <form onSubmit={handleSubmit} className="relative">
-              <div className="flex items-end gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-400 transition-all">
+              <div className="flex items-end gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-400 transition-all">
                 <Textarea
                   ref={textareaRef}
                   placeholder={disabled ? "Set up brands first..." : "Ask about market trends, competitor analysis, brand performance..."}

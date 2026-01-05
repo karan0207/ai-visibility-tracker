@@ -1,222 +1,185 @@
 # AI Visibility Tracker
 
-> Know where your brand stands in AI-generated recommendations.
+> Track your brand's presence in AI-generated recommendations.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black?logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38B2AC?logo=tailwindcss) ![React](https://img.shields.io/badge/React-19.2.3-61DAFB?logo=react)
 
-## 🎯 What This Tool Does
+## Overview
 
-**When people ask AI for recommendations, brands compete to be mentioned in the answer—not clicks or rankings.**
+When users ask AI for recommendations, brands compete for mentions within the response rather than traditional search rankings. This tool provides insights into:
 
-This tool helps you see:
-- ✅ **Does your brand show up?** – Are you even in the conversation?
-- 📊 **How strong is your presence?** – How much attention do you get compared to competitors?
-- ❌ **Where are you invisible?** – Which prompts never mention you?
+-   **Brand Presence**: Verification of your brand's inclusion in AI-generated responses.
+-   **Competitive Analysis**: Assessment of your brand's visibility relative to competitors.
+-   **Gap Analysis**: Identification of prompts where your brand is omitted.
 
-It's not about claiming "we're winning." It's about understanding **how AI perceives your brand** and where that perception falls short.
+The objective is to objectively measure AI perception of your brand to inform strategic improvements.
 
-## ✨ What You Can Do
+## Capabilities
 
-- 💬 **Chat with AI** – Ask questions naturally and see which brands get mentioned in real-time
-- 📋 **Batch Analysis** – Run multiple prompts at once to get a complete picture
-- 📊 **Track Metrics Live** – Watch the dashboard update as results come in
-- 🏆 **Compare Competitors** – See who's winning the AI attention war
-- 📜 **Review History** – Look back at past prompts and see what changed
-- 🔗 **Follow Citations** – See which sources influence AI's recommendations
-- 🤖 **Switch AI Models** – Use GPT-4o, Gemini, xAI (Grok), or Claude (I recommend Google Gemini for now)
+-   **Real-time Analysis**: Interact with AI models directly to observe brand mentions in real-time.
+-   **Batch Processing**: Execute multiple prompts simultaneously for comprehensive data collection.
+-   **Live Metrics**: Monitor dashboard updates as analysis results are processed.
+-   **Competitor Benchmarking**: Compare your brand's performance against key competitors.
+-   **Historical Data**: Review past analysis sessions and track changes over time.
+-   **Citation Tracking**: Identify sources influencing AI recommendations.
+-   **Multi-Model Support**: Support for GPT-4o, Gemini, xAI (Grok), and Claude.
 
-## 🛠️ What's Under the Hood
+## Technical Architecture
 
-- **Frontend**: Next.js 16 + React 19 + TypeScript
-- **UI**: Radix UI + Tailwind CSS 4
-- **Database**: PostgreSQL (running in Docker)
-- **AI**: OpenAI, Google, xAI (Grok), or Anthropic (Claude)
-- **Testing**: Jest + Playwright
+-   **Frontend**: Next.js 16, React 19, TypeScript
+-   **UI Framework**: Radix UI, Tailwind CSS 4
+-   **Database**: PostgreSQL (containerized)
+-   **AI Providers**: OpenAI, Google, xAI, Anthropic
+-   **Testing**: Jest, Playwright
 
-## 🚀 Quick Start
+## Getting Started
 
-**Get up and running in 5 minutes.**
+Follow these instructions to set up the project locally.
 
-### What You'll Need
+### Prerequisites
 
-- Node.js 18 or higher
-- Docker & Docker Compose
-- An AI API key (we support OpenAI, Google, xAI, and Anthropic)
+-   Node.js 18 or higher
+-   Docker & Docker Compose
+-   Valid API key for supported AI providers (OpenAI, Google, xAI, or Anthropic)
 
-### Step-by-Step Setup
+### Installation
 
+1.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+2.  **Initialize Database**
+    Start the PostgreSQL container:
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  **Environment Configuration**
+    Copy the example environment file:
+    ```bash
+    cp .env.example .env
+    ```
+    Edit `.env` to include your API keys. We recommend using Google Gemini for an optimal balance of performance and cost during development.
+
+4.  **Database Setup**
+    Generate the client and run migrations:
+    ```bash
+    npm run db:generate
+    npm run db:migrate
+    ```
+
+5.  **Start Application**
+    Launch the development server:
+    ```bash
+    npm run dev
+    ```
+
+    The application will be accessible at [http://localhost:3000](http://localhost:3000).
+
+### Running Tests
+
+Execute unit tests with the following command:
 ```bash
-# 1. Install dependencies
-npm install
-
-# 2. Start the database (PostgreSQL)
-docker-compose up -d
-
-# 3. Set up your environment
-cp .env.example .env
-# Edit .env and add your Gemini API key
-# Keep the database URL same as it is
-# I recommend Google Gemini key in .env file for a good balance of speed and quality
-
-# 4. Set up the database
-npm run db:generate
-npm run db:migrate
-
-# 5. Start the development server
-npm run dev
+npm test
 ```
 
-🎉 **Open [http://localhost:3000](http://localhost:3000) to start tracking!**
+## Usage Guide
 
-### Run Tests
+1.  **Create a Session**: Define a category (e.g., "CRM software") and list competitors (e.g., Salesforce, HubSpot).
+2.  **Select Analysis Mode**:
+    -   **Chat Mode**: Sequential interaction for immediate feedback.
+    -   **Batch Mode**: Parallel processing of multiple prompts for broad data collection.
+3.  **Analyze Results**: Review real-time updates on the dashboard.
+4.  **Interpret Data**: Identify patterns in mentions and omissions.
 
-```bash
-npm test        # Unit tests
-```
+## Metrics Documentation
 
-## 🎮 How to Use
+### Prompt Coverage
+**Definition**: The frequency of your brand's appearance across all prompts.
+**Calculation**: (Prompts with Brand Mention / Total Prompts)
+**Significance**: Indicates fundamental visibility. Low coverage suggests the brand is not being retrieved by the model for the given context.
 
-1. **Create a Session** – Pick a category (like "CRM software") and list your competitors (Salesforce, HubSpot, Pipedrive, Zoho)
-2. **Start Analyzing** – Choose your style:
-   - **Chat Mode** – Ask questions one by one and see results instantly
-   - **Batch Mode** – Run multiple prompts at once for a comprehensive view
-3. **Explore Results** – Watch as the dashboard fills up with insights
-4. **Find Patterns** – Look at which questions mention you and which don't
+### Mention Share
+**Definition**: Your brand's share of total mentions compared to all brands.
+**Calculation**: (Brand Mentions / Total Mentions of All Brands)
+**Significance**: Measures relative attention within the conversation.
 
-## 📈 Understanding Your Metrics
+### Mentions per Prompt
+**Definition**: The average number of times your brand is mentioned when it appears.
+**Calculation**: (Total Brand Mentions / Prompts where Brand Appears)
+**Significance**: Values > 1.0 indicate reinforced presence or detailed discussion.
 
-## Key Metrics
+### First-Mention Rate
+**Definition**: Frequency of your brand appearing first in the list of recommendations.
+**Calculation**: (First Position Mentions / Prompts where Brand Appears)
+**Significance**: High placement positions often correlate with "default" or "top" recommendations.
 
-### 1️⃣ Prompt Coverage – **Are you even in the game?**
+### Missed Prompts
+**Definition**: The count of prompts where your brand was not mentioned.
+**Calculation**: (Total Prompts - Prompts where Brand Appears)
+**Significance**: Highlights specific areas for content or SEO improvement.
 
-| | |
-|---|---|
-| **What it means** | How often your brand gets mentioned, period |
-| **How it's calculated** | Prompts with your brand ÷ Total prompts |
-| **Why you care** | This is your reality check. If it's low, nothing else matters. |
-| **What to aim for** | 100% = always remembered · <30% = mostly invisible |
+> **Note**: Sample size affects confidence. We recommend 30+ prompts for reliable comparative analysis.
 
-### 2️⃣ Mention Share – **How much of the conversation do you own?**
-
-| | |
-|---|---|
-| **What it means** | Your share of all brand mentions across every prompt |
-| **How it's calculated** | Your mentions ÷ Total mentions from all brands |
-| **Why you care** | AI often mentions multiple brands. This shows how much attention you capture. |
-| **Watch out for** | High share + low coverage = noisy dominance. Always check coverage first. |
-
-### 3️⃣ Mentions per Prompt – **Are you a one-time mention or a recurring star?**
-
-| | |
-|---|---|
-| **What it means** | How many times you're mentioned in prompts where you appear |
-| **How it's calculated** | Your total mentions ÷ Prompts where you appear |
-| **Why you care** | ~1.0 = casual mention · >1.5 = reinforced presence |
-| **Quick insight** | Distinguishes a quick name-drop from a brand that gets emphasized |
-
-### 4️⃣ First-Mention Rate – **Does AI think of you first?**
-
-| | |
-|---|---|
-| **What it means** | How often your brand appears first among competitors |
-| **How it's calculated** | First mentions ÷ Prompts where you appear |
-| **Why you care** | LLMs tend to list the "default" option first. This is a preference signal. |
-| **Important** | Directional only. Use this alongside other metrics, not alone. |
-
-### 5️⃣ Missed Prompts – **Where are you invisible?**
-
-| | |
-|---|---|
-| **What it means** | How many prompts don't mention you at all |
-| **How it's calculated** | Total prompts - Prompts where you appear |
-| **Why you care** | **This is your action plan.** Tells you exactly where to improve. |
-| **Example insight** | "Invisible in 'affordable tools' prompts, but strong in 'enterprise' prompts." |
-
-> 💡 **Pro tip**: This metric flips your mindset from bragging to fixing.
-
----
-
-### 🎯 Sample Size Matters
-
-| Prompts | Confidence | What it means |
-|---------|------------|---------------|
-| < 5 | 🔴 Low | Just exploring |
-| 5-29 | 🟡 Directional | See some trends |
-| 30+ | 🟢 High | Solid comparison |
-
-**Golden rule**: More prompts = more confidence. Don't make big decisions based on 3 queries.
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
 ├── app/           # Next.js pages and API routes
 ├── components/    # React components (UI, chat, dashboard, forms)
-├── services/      # AI client and analysis logic
-├── db/            # Database client and queries
-├── lib/           # Utilities and constants
-└── types/         # TypeScript definitions
+├── services/      # AI client integration and analysis logic
+├── db/            # Database configuration and queries
+├── lib/           # Utility functions and constants
+└── types/         # TypeScript type definitions
 ```
 
-## 💡 Design Philosophy
+## Design Philosophy
 
-We made a few key choices to keep things simple and useful:
+-   **Interaction-Centric**: Prioritizing chat-based exploration.
+-   **Session Isolation**: Compartmentalizing analysis by category and competitor set.
+-   **Real-Time Feedback**: Immediate visualization of data as it generates.
+-   **Precision**: Exact matching logic to ensure data accuracy.
+-   **Security**: Server-side key management.
+-   **Data Persistence**: Comprehensive storage for historical tracking.
 
-- **Chat first** – Natural exploration beats rigid forms
-- **Sessions stay focused** – Each session tracks one category and specific competitors
-- **Real-time updates** – Watch metrics change as you run queries
-- **Accurate detection** – Exact matching prevents false positives (no fuzzy matching drama)
-- **Secure by default** – API keys live on the server, never in the browser
-- **Save everything** – PostgreSQL keeps your data for future analysis and trends
+## Contributing
 
-## 🤝 Contributing
+Contributions are welcome to enhance the tool's utility and clarity.
 
-**Help us make AI visibility tracking clearer and more useful.**
+**When proposing new metrics:**
+-   Ensure they address a tangible business question.
+-   Maintain interpretability for non-technical stakeholders.
+-   Transparently communicate confidence levels.
 
-When adding features or metrics, ask yourself:
+**Guidelines:**
+-   Prioritize normalized values.
+-   Distinguish between presence and share.
+-   Maintain access to raw data.
 
-- Does this answer a real business question? (Presence, dominance, or absence)
-- Can anyone understand it without a statistics degree?
-- Are we being honest about confidence levels at small sample sizes?
+## Roadmap
 
-**Guidelines for new metrics:**
+Future development focuses include:
 
-- ✅ Prefer normalized values (per prompt) over raw counts
-- ✅ Separate presence from share – they tell different stories
-- ✅ Keep the raw data accessible – prompt-to-response mapping matters
-- ❌ Avoid "magic numbers" or composite scores without showing the math
+-   **Sentiment Analysis**: Categorization of mentions (Positive/Negative/Neutral).
+-   **Trend Visualization**: Longitudinal analysis of visibility.
+-   **Export Functionality**: PDF and CSV report generation.
+-   **Brand Aliases**: Support for acronyms and alternative naming.
+-   **Scheduled Analysis**: Automated periodic reporting.
+-   **Alerting**: Notifications for significant visibility shifts.
 
-> **Rule of thumb**: Optimize for decision-making, not vanity numbers.
+## API Reference
 
-I welcome pull requests, issues, and ideas! 🎉
-
-## 🚀 What's Coming Next
-
-We have big plans for AI Visibility Tracker. Here's what we're working on:
-
-- 🎭 **Sentiment Analysis** – Are mentions positive, negative, or neutral?
-- 📈 **Trend Charts** – See how your visibility changes over time
-- 📄 **Export Options** – Download reports as PDF or CSV
-- 🔄 **Brand Aliases** – Handle variations like "SFDC" → "Salesforce"
-- ⏰ **Scheduled Checks** – Automated periodic analysis
-- 🔔 **Smart Alerts** – Get notified when visibility shifts
-
-Have ideas? I would love to hear them!
-
-## 🔌 API Endpoints
-
-All endpoints are REST APIs. Here's what's available:
+The application provides a RESTful API for integration.
 
 **Sessions & History**
-- `POST /api/session` – Create a new analysis session
-- `GET /api/session?id={sessionId}` – Get session data
-- `GET /api/history` – List all analyses
-- `GET /api/history/[id]` – Get a specific analysis
+-   `POST /api/session`: Create a new analysis session
+-   `GET /api/session?id={sessionId}`: Retrieve session data
+-   `GET /api/history`: List all historical analyses
+-   `GET /api/history/[id]`: Retrieve a specific analysis record
 
 **Analysis**
-- `POST /api/chat` – Single prompt analysis
-- `POST /api/analyze` – Batch analysis (auto-generated prompts)
-- `POST /api/analyze-multi` – Batch with custom prompts
-- `POST /api/analyze-stream` – Streaming batch with real-time updates
-
-See the source code in `src/app/api/` for full details and examples.
+-   `POST /api/chat`: Single prompt analysis
+-   `POST /api/analyze`: Batch analysis (auto-generated prompts)
+-   `POST /api/analyze-multi`: Batch analysis (custom prompts)
+-   `POST /api/analyze-stream`: Streaming batch analysis

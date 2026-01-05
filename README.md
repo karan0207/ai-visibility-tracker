@@ -72,7 +72,6 @@ Follow these instructions to set up the project locally.
     Generate the client and run migrations:
     ```bash
     npm run db:generate
-    npm run db:migrate
     ```
 
 6.  **Start Application**

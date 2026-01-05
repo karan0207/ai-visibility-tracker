@@ -44,32 +44,38 @@ Follow these instructions to set up the project locally.
 
 ### Installation
 
-1.  **Install Dependencies**
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/karan0207/ai-visibility-tracker.git
+    cd ai-visibility-tracker
+    ```
+
+2.  **Install Dependencies**
     ```bash
     npm install
     ```
 
-2.  **Initialize Database**
+3.  **Initialize Database**
     Start the PostgreSQL container:
     ```bash
     docker-compose up -d
     ```
 
-3.  **Environment Configuration**
+4.  **Environment Configuration**
     Copy the example environment file:
     ```bash
     cp .env.example .env
     ```
     Edit `.env` to include your API keys. We recommend using Google Gemini for an optimal balance of performance and cost during development.
 
-4.  **Database Setup**
+5.  **Database Setup**
     Generate the client and run migrations:
     ```bash
     npm run db:generate
     npm run db:migrate
     ```
 
-5.  **Start Application**
+6.  **Start Application**
     Launch the development server:
     ```bash
     npm run dev

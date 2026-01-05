@@ -36,7 +36,7 @@ export function Header() {
         </Link>
         
         <div className="flex items-center gap-2 sm:gap-4">
-          <Link href="/dashboard" className="inline-block">
+          <Link href="/" className="inline-block">
             <Badge 
               variant="secondary" 
               className="bg-black text-white border border-white/20 shadow-sm"

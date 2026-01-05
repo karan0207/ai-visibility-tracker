@@ -58,7 +58,8 @@ cp .env.example .env
 # We recommend Google Gemini for a good balance of speed and quality
 
 # 4. Set up the database
-npx prisma migrate dev
+npm run db:generate
+npm run db:migrate
 
 # 5. Start the development server
 npm run dev
@@ -70,7 +71,6 @@ npm run dev
 
 ```bash
 npm test        # Unit tests
-npm run test:e2e  # End-to-end tests
 ```
 
 ## 🎮 How to Use

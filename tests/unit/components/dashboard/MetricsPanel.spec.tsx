@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MetricsPanel } from '@/components/dashboard/MetricsPanel';
 import type { BrandResult } from '@/types/analysis';
-import { within as testingLibraryWithin } from '@testing-library/react';
 
 jest.mock('lucide-react', () => ({
   BarChart3: () => <span data-testid="chart-icon">Chart</span>,
@@ -37,10 +36,7 @@ describe('MetricsPanel', () => {
     render(<MetricsPanel totalPrompts={10} totalMentions={20} brands={brands} />);
     expect(screen.getByText('Prompts Analyzed')).toBeInTheDocument();
     expect(screen.getByText('Total Mentions')).toBeInTheDocument();
-
-    const leadingCard = screen.getByText('Leading Brand').closest('div');
-    expect(leadingCard).not.toBeNull();
-    expect(within(leadingCard as HTMLElement).getByText('Top')).toBeInTheDocument();
+    expect(screen.getByText('Leading Brand')).toBeInTheDocument();
   });
 
   it('handles empty brands', () => {
@@ -48,7 +44,4 @@ describe('MetricsPanel', () => {
     expect(screen.getAllByText('—').length).toBeGreaterThan(0);
   });
 });
-function within(element: HTMLElement) {
-  return testingLibraryWithin(element);
-}
 

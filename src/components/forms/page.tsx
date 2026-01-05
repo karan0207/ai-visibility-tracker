@@ -11,7 +11,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { 
   RotateCcw, 
   BarChart3, 
-  Trophy, 
   MessageSquare, 
   Link2, 
   Settings, 
@@ -657,7 +656,7 @@ export default function Dashboard() {
                         brands={brandResults}
                         confidenceLevel={getConfidenceLevel(promptResults.length)}
                       />
-                      <Leaderboard brands={brandResults} totalPrompts={promptResults.length} />
+                      <Leaderboard brands={brandResults} />
                     </>
                   )}
                   {analyticsTab === 'prompts' && (

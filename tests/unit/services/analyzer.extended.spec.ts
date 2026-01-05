@@ -38,7 +38,6 @@ describe('analyzeResponses - edge cases and stress tests', () => {
       ]);
 
       // 'AI' should match in 'AI tools' but word boundary prevents match in 'OpenAI'
-      const aiOnly = result.brands.find(b => b.name === 'AI');
       const openAI = result.brands.find(b => b.name === 'OpenAI');
       expect(openAI?.mentions).toBeGreaterThanOrEqual(1);
     });

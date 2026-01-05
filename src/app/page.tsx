@@ -146,7 +146,23 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans">
+      {/* Main gradient background wrapper */}
+      <div className="fixed inset-0 bg-gradient-to-b from-slate-950 to-slate-900 -z-10">
+        {/* Dot Pattern Overlay */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(168, 85, 247, 0.15) 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        
+        {/* Gradient Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+      
       <Header />
       
       {/* Modern Hero Section */}
@@ -155,7 +171,7 @@ export default function Home() {
       
      
       
-      <main className="flex-1 w-full px-3 sm:px-4 py-8 sm:py-12 md:py-16 bg-white dark:bg-slate-950  inset-0 bg-gradient-to-b from-slate-950 to-slate-900">
+      <main className="flex-1 w-full px-3 sm:px-4 py-8 sm:py-12 md:py-16">
         <div className="container mx-auto max-w-5xl">
           <div className="space-y-12 sm:space-y-16">
           
@@ -169,7 +185,7 @@ export default function Home() {
               )}
 
               <Tabs defaultValue="single" className="w-full flex flex-col items-center" data-tab-trigger="single">
-                <TabsList className="grid w-full max-w-sm sm:max-w-md grid-cols-2 h-12 sm:h-14 bg-white dark:bg-slate-900 p-1 sm:p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-8 sm:mb-10">
+                <TabsList className="grid w-full max-w-sm sm:max-w-md grid-cols-2 h-12 sm:h-14 bg-slate-900/80 backdrop-blur-sm p-1 sm:p-1.5 rounded-2xl border border-slate-800 shadow-lg mb-8 sm:mb-10">
                   <TabsTrigger 
                     value="single" 
                     disabled={isLoading}

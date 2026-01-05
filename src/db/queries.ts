@@ -1,5 +1,5 @@
 import prisma from './client';
-import type { AnalysisResult, BrandResult, PromptResult, CitationResult } from '@/types/analysis';
+import type { BrandResult, PromptResult, CitationResult } from '@/types/analysis';
 
 /**
  * Save a complete analysis to the database

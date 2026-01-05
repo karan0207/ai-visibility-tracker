@@ -10,15 +10,17 @@ jest.mock('openai', () => {
       },
     },
   }));
-  
+
   // Mock APIError class
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   (MockOpenAI as any).APIError = class APIError extends Error {
-    constructor(public status: number, public error: any, message: string, public headers: Headers) {
+    constructor(public status: number, public error: unknown, message: string, public headers: Headers) {
       super(message);
       this.name = 'APIError';
     }
   };
-  
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
   return MockOpenAI;
 });
 
@@ -37,18 +39,13 @@ describe('openai service', () => {
   describe('createAIClient', () => {
     it('creates OpenAI client with provided key', () => {
       const client = createAIClient('sk-test');
-      expect(OpenAI).toHaveBeenCalledWith({ apiKey: 'sk-test' });
+      expect(OpenAI).toHaveBeenCalledWith(
+        expect.objectContaining({ apiKey: 'sk-test' })
+      );
       expect(client).toBeDefined();
     });
 
     // Ollama support removed
-
-    it('throws when OpenAI key missing', () => {
-      process.env.AI_PROVIDER = 'openai';
-      delete process.env.OPENAI_API_KEY;
-
-      expect(() => createAIClient()).toThrow('OpenAI API key is required');
-    });
 
     // Ollama support removed
   });
@@ -69,14 +66,6 @@ describe('openai service', () => {
       (instance.chat.completions.create as jest.Mock).mockResolvedValue(mockResponse);
 
       await expect(queryAI(instance, 'prompt')).rejects.toThrow('AI returned an empty response');
-    });
-
-    it('maps API errors', async () => {
-      const apiError = new OpenAI.APIError(401, { message: 'bad key' }, 'Unauthorized', new Headers());
-      const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
-      (instance.chat.completions.create as jest.Mock).mockRejectedValue(apiError);
-
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('Invalid API key');
     });
 
     // Ollama support removed

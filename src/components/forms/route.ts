@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { category, brands, prompts, apiKey, sessionId } = validation.data;
+    const { category, brands, prompts, apiKey } = validation.data;
 
     // Create AI client
     let client;

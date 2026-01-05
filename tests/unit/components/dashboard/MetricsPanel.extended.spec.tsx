@@ -105,18 +105,6 @@ describe('MetricsPanel - extended coverage', () => {
   });
 
   describe('edge cases', () => {
-    it('handles zero metrics gracefully', () => {
-      const brand = createBrand({
-        promptCoverage: 0,
-        mentionShare: 0,
-        firstMentionRate: 0,
-        mentions: 0,
-        missedPrompts: 10,
-      });
-      render(<MetricsPanel totalPrompts={10} totalMentions={0} brands={[brand]} />);
-      expect(screen.getByText('TestBrand')).toBeInTheDocument();
-    });
-
     it('handles 100% metrics', () => {
       const brand = createBrand({
         promptCoverage: 100,

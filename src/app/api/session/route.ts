@@ -15,7 +15,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('[Session API] Creating session for category:', category, 'brands:', brands);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Session API] Creating session for category:', category, 'brands:', brands);
+    }
 
     // Create new analysis session
     const analysis = await prisma.analysis.create({
@@ -45,7 +47,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('[Session API] Session created with ID:', analysis.id);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Session API] Session created with ID:', analysis.id);
+    }
 
     return NextResponse.json({
       sessionId: analysis.id,

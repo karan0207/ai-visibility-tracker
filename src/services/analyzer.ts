@@ -18,21 +18,24 @@ function getConfidenceLevel(totalPrompts: number): ConfidenceLevel {
 function extractUrls(text: string): string[] {
   const urls: Set<string> = new Set();
   
+  // Extract markdown links [text](url) first to avoid double-counting
+  const markdownRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gi;
+  let markdownMatch;
+  while ((markdownMatch = markdownRegex.exec(text)) !== null) {
+    const url = markdownMatch[2].replace(/[.,;:!?]+$/, '');
+    if (url) urls.add(url);
+  }
+  
+  // Remove markdown links from text to avoid extracting them twice
+  const textWithoutMarkdown = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gi, '');
+  
   // Extract direct URLs (http:// or https://)
   const urlRegex = /https?:\/\/[^\s\)\]\>\"\']+/gi;
-  const directMatches = text.match(urlRegex) || [];
+  const directMatches = textWithoutMarkdown.match(urlRegex) || [];
   directMatches.forEach(url => {
     const cleaned = url.replace(/[.,;:!?]+$/, '');
     if (cleaned) urls.add(cleaned);
   });
-  
-  // Extract markdown links [text](url)
-  const markdownRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gi;
-  let markdownMatch;
-  while ((markdownMatch = markdownRegex.exec(text)) !== null) {
-    const url = markdownMatch[2];
-    if (url) urls.add(url);
-  }
   
   return Array.from(urls);
 }
@@ -53,112 +56,137 @@ function getDomain(url: string): string {
  * Create a flexible regex pattern for brand matching
  * Handles variations like "OpenAI" vs "Open AI", "GPT-4" vs "GPT4" vs "GPT 4"
  */
-function createFlexiblePattern(brand: string): RegExp[] {
-  // Split brand into words, escape each, and create regex for each word
-  return brand
-    .split(/\s+/)
-    .filter(Boolean)
-    .map(word => {
-      const pattern = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      return new RegExp(`\\b${pattern}\\b`, 'gi');
-    });
+function createFlexiblePattern(brand: string): RegExp {
+  // Escape regex special characters
+  const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  
+  const escapedBrand = escape(brand);
+
+  // Determine appropriate boundary based on brand content
+  // If brand ends with non-word character (like C++, C#), use lookahead instead of \b
+  const endsWithNonWord = /[^\w]$/.test(brand);
+
+  const startBoundary = '(?<!\\w)';
+  const endBoundary = endsWithNonWord ? '(?!\\w)' : '(?!\\w)';
+  
+  // If brand contains CamelCase, also match with spaces between words
+  const camelWords = brand.split(/(?=[A-Z])/).filter(w => w.length > 0);
+  
+  if (camelWords.length > 1) {
+    // Create pattern that matches either exact brand OR spaced version
+    const spacedPattern = camelWords.map(escape).join('\\s+');
+    return new RegExp(`${startBoundary}(?:${escapedBrand}|${spacedPattern})${endBoundary}`, 'gi');
+  }
+  
+  // For non-CamelCase brands, just match exact with appropriate boundaries
+  return new RegExp(`${startBoundary}${escapedBrand}${endBoundary}`, 'gi');
+}
+
+// Cache for regex patterns to avoid recreating them
+const patternCache = new Map<string, RegExp>();
+
+function getPattern(brand: string): RegExp {
+  if (!patternCache.has(brand)) {
+    patternCache.set(brand, createFlexiblePattern(brand));
+  }
+  return patternCache.get(brand)!;
 }
 
 /**
- * Count brand mentions in text (case-insensitive, flexible match)
+ * Find all match positions for a brand in text (avoids double-counting overlaps)
+ */
+function findAllMatches(text: string, brand: string): { index: number; length: number }[] {
+  const pattern = getPattern(brand);
+  const matches: { index: number; length: number }[] = [];
+  
+  // Reset regex state
+  pattern.lastIndex = 0;
+  
+  let match;
+  while ((match = pattern.exec(text)) !== null) {
+    matches.push({ index: match.index, length: match[0].length });
+  }
+  
+  return matches;
+}
+
+/**
+ * Count brand mentions in text (case-insensitive, flexible match, no double-counting)
  */
 function countMentions(text: string, brand: string): number {
-  const patterns = createFlexiblePattern(brand);
-  let total = 0;
-  for (const regex of patterns) {
-    const matches = text.match(regex);
-    if (matches) total += matches.length;
-  }
-  return total;
+  const matches = findAllMatches(text, brand);
+  return matches.length;
 }
 
 /**
  * Find the position of first mention of brand in text
  */
 function findFirstMentionPosition(text: string, brand: string): number {
-  const patterns = createFlexiblePattern(brand);
-  let minIndex = -1;
-  for (const regex of patterns) {
-    regex.lastIndex = 0;
-    const match = regex.exec(text);
-    if (match) {
-      if (minIndex === -1 || match.index < minIndex) {
-        minIndex = match.index;
-      }
-    }
-  }
-  return minIndex;
+  const matches = findAllMatches(text, brand);
+  return matches.length > 0 ? matches[0].index : -1;
 }
 
 /**
  * Extract context around brand mention (surrounding sentences)
  */
-function extractContext(text: string, brand: string, contextLength: number = 120): string | null {
-  const patterns = createFlexiblePattern(brand);
-  let bestMatch: { index: number; matchedText: string } | null = null;
-  for (const regex of patterns) {
-    regex.lastIndex = 0;
-    const match = regex.exec(text);
-    if (match) {
-      if (!bestMatch || match.index < bestMatch.index) {
-        bestMatch = { index: match.index, matchedText: match[0] };
-      }
-    }
-  }
-  if (!bestMatch) return null;
-  const position = bestMatch.index;
-  const matchedText = bestMatch.matchedText;
+function extractContext(text: string, brand: string, contextLength: number = 100): string | null {
+  const matches = findAllMatches(text, brand);
+  if (matches.length === 0) return null;
+  
+  const firstMatch = matches[0];
+  const position = firstMatch.index;
+  const matchLength = firstMatch.length;
+  
   // Find sentence boundaries
   const beforeText = text.slice(0, position);
-  const afterText = text.slice(position + matchedText.length);
+  const afterText = text.slice(position + matchLength);
+  
   // Look for sentence start (period, newline, or start of text)
   const sentenceStartMatch = beforeText.match(/[.!?\n][^.!?\n]*$/);
   const start = sentenceStartMatch 
     ? position - sentenceStartMatch[0].length + 1 
     : Math.max(0, position - contextLength);
+  
   // Look for sentence end
   const sentenceEndMatch = afterText.match(/^[^.!?\n]*[.!?\n]/);
   const end = sentenceEndMatch
-    ? position + matchedText.length + sentenceEndMatch[0].length
-    : Math.min(text.length, position + matchedText.length + contextLength);
+    ? position + matchLength + sentenceEndMatch[0].length
+    : Math.min(text.length, position + matchLength + contextLength);
+  
   let context = text.slice(start, end).trim();
+  
   // Clean up markdown formatting for display
   context = context.replace(/\*\*/g, '').replace(/\*/g, '');
-  if (start > 0 && !context.startsWith('...')) context = '...' + context;
-  if (end < text.length && !context.endsWith('...')) context = context + '...';
+  
+  // Add ellipsis if truncated
+  if (start > 0) context = '...' + context;
+  if (end < text.length) context = context + '...';
+  
   return context;
 }
 
 /**
- * Extract multiple contexts (all mentions) for a brand
+ * Extract multiple contexts (diverse sample across prompts)
  */
-function extractAllContexts(text: string, brand: string, maxContexts: number = 3): string[] {
-  const regex = createFlexiblePattern(brand);
-  const contexts: string[] = [];
-  let match;
-  
-  while ((match = regex.exec(text)) !== null && contexts.length < maxContexts) {
-    const position = match.index;
-    const matchedText = match[0];
-    
-    const start = Math.max(0, position - 80);
-    const end = Math.min(text.length, position + matchedText.length + 80);
-    
-    let context = text.slice(start, end).trim();
-    context = context.replace(/\*\*/g, '').replace(/\*/g, '');
-    
-    if (start > 0) context = '...' + context;
-    if (end < text.length) context = context + '...';
-    
-    contexts.push(context);
+function extractAllContexts(
+  text: string, 
+  brand: string, 
+  existingContexts: string[],
+  maxContexts: number = 5
+): string[] {
+  if (existingContexts.length >= maxContexts) {
+    return existingContexts;
   }
   
-  return contexts;
+  const context = extractContext(text, brand);
+  if (!context) return existingContexts;
+  
+  // Avoid duplicate contexts
+  if (existingContexts.includes(context)) {
+    return existingContexts;
+  }
+  
+  return [...existingContexts, context];
 }
 
 /**
@@ -170,6 +198,9 @@ export function analyzeResponses(
   promptResults: { prompt: string; response: string }[]
 ): AnalysisResult {
   const totalPrompts = promptResults.length;
+  
+  // Clear pattern cache for new analysis
+  patternCache.clear();
   
   // Initialize brand tracking
   const brandData: Map<string, {
@@ -205,7 +236,9 @@ export function analyzeResponses(
       if (mentions > 0) {
         brandsMentioned.push(brandName);
         
-        const data = brandData.get(brandName)!;
+        const data = brandData.get(brandName);
+        if (!data) return; // Safety check
+        
         data.mentions += mentions;
         data.promptsAppeared.add(index);
         
@@ -213,10 +246,8 @@ export function analyzeResponses(
         const context = extractContext(response, brandName);
         if (context) {
           brandContexts[brandName] = context;
-          // Store up to 5 contexts per brand across all prompts
-          if (data.contexts.length < 5) {
-            data.contexts.push(context);
-          }
+          // Store diverse contexts across prompts (limit per brand)
+          data.contexts = extractAllContexts(response, brandName, data.contexts, 5);
         }
         
         // Check if this brand is mentioned first
@@ -228,9 +259,23 @@ export function analyzeResponses(
       }
     });
 
+    // Handle tie in first mention (both at position 0) - use alphabetical order for consistency
+    if (firstMention && firstMentionPosition < Infinity) {
+      const brandsAtSamePosition = brandNames.filter(brand => {
+        const pos = findFirstMentionPosition(response, brand);
+        return pos === firstMentionPosition;
+      });
+      
+      if (brandsAtSamePosition.length > 1) {
+        // Deterministic tie-breaking: alphabetical order
+        firstMention = brandsAtSamePosition.sort()[0];
+      }
+    }
+
     // Record first mention for the winning brand
     if (firstMention) {
-      brandData.get(firstMention)!.firstMentions++;
+      const data = brandData.get(firstMention);
+      if (data) data.firstMentions++;
     }
 
     // Extract URLs
@@ -260,7 +305,25 @@ export function analyzeResponses(
 
   // Build brand results with calculated metrics
   const brands: BrandResult[] = brandNames.map((name) => {
-    const data = brandData.get(name)!;
+    const data = brandData.get(name);
+    if (!data) {
+      // Safety fallback for missing data
+      return {
+        name,
+        promptCoverage: 0,
+        mentionShare: 0,
+        mentionsPerPrompt: 0,
+        firstMentionRate: 0,
+        missedPrompts: totalPrompts,
+        mentions: 0,
+        promptsWithBrand: 0,
+        firstMentions: 0,
+        visibility: 0,
+        citationShare: 0,
+        contexts: [],
+      };
+    }
+    
     const promptsWithBrand = data.promptsAppeared.size;
     const missedPrompts = totalPrompts - promptsWithBrand;
     

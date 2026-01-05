@@ -10,11 +10,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { 
   RotateCcw, 
   BarChart3, 
-  Trophy, 
   MessageSquare, 
   Link2, 
   Settings, 
-  Sparkles,
   Home,
   PanelLeftClose,
   PanelLeft,
@@ -410,10 +408,26 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             {!sidebarCollapsed && (
               <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-sm shadow-indigo-500/20">
-                  <Sparkles className="h-4 w-4 text-white" />
-                </div>
-                <span className="font-bold text-slate-800 dark:text-slate-100 tracking-tight">AI Tracker</span>
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-10 w-10">
+                  {/* A - Left letter */}
+                  <path d="M4 32 L8 22 L12 32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  <path d="M5.5 28 L10.5 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  
+                  {/* V - Center letter (made more prominent) */}
+                  <path d="M14 22 L20 34 L26 22" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  
+                  {/* T - Right letter */}
+                  <path d="M28 22 L36 22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                  <path d="M32 22 L32 32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+                  
+                  {/* Glow effect for V */}
+                  <path d="M14 22 L20 34 L26 22" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.5"/>
+                  
+                  {/* Decorative accent dots */}
+                  <circle cx="8" cy="20" r="1.5" fill="currentColor" opacity="0.6"/>
+                  <circle cx="20" cy="19" r="1.5" fill="currentColor" opacity="0.8"/>
+                  <circle cx="32" cy="20" r="1.5" fill="currentColor" opacity="0.6"/>
+                </svg>
               </div>
             )}
             <Button 
@@ -430,10 +444,10 @@ export default function Dashboard() {
         {/* Session Info */}
         {!sidebarCollapsed && (
           <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Category</p>
-            <p className="font-medium text-slate-700 dark:text-slate-300 mb-3">{category}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Category</p>
+            <p className="font-medium text-slate-800 dark:text-slate-200 mb-3">{category}</p>
             
-            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Tracking</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Tracking</p>
             <div className="flex flex-wrap gap-1">
               {brands.map((brand) => (
                 <span 
@@ -446,7 +460,7 @@ export default function Dashboard() {
             </div>
             
             <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 {promptResults.length} prompts • {totalMentions} mentions
               </p>
             </div>
@@ -465,7 +479,7 @@ export default function Dashboard() {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1.5 ${
                 mainView === id
                   ? 'bg-indigo-600 text-white'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
               } ${sidebarCollapsed ? 'justify-center' : ''}`}
               title={sidebarCollapsed ? label : undefined}
             >
@@ -478,7 +492,7 @@ export default function Dashboard() {
         {/* Analytics Sub-navigation */}
         {mainView === 'analytics' && (
           <nav className="flex-1 p-2.5 space-y-1.5 overflow-auto">
-            <p className={`text-xs text-slate-400 uppercase tracking-wide px-3 py-2 ${sidebarCollapsed ? 'hidden' : ''}`}>
+            <p className={`text-xs text-slate-500 uppercase tracking-wide px-3 py-2 ${sidebarCollapsed ? 'hidden' : ''}`}>
               Views
             </p>
             {[
@@ -492,7 +506,7 @@ export default function Dashboard() {
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   analyticsTab === id
                     ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 } ${sidebarCollapsed ? 'justify-center' : ''}`}
                 title={sidebarCollapsed ? label : undefined}
               >
@@ -516,7 +530,7 @@ export default function Dashboard() {
         {mainView === 'chat' && !sidebarCollapsed && (
           <div className="flex-1 p-4 overflow-auto">
             <div className="flex items-center gap-2 mb-3">
-              <Settings className="h-3 w-3 text-slate-400" />
+              <Settings className="h-3 w-3 text-slate-500" />
               <span className="text-xs font-medium text-slate-500">Add Brands</span>
             </div>
             <SessionSetup 
@@ -638,7 +652,7 @@ export default function Dashboard() {
                         brands={brandResults}
                         confidenceLevel={getConfidenceLevel(promptResults.length)}
                       />
-                      <Leaderboard brands={brandResults} totalPrompts={promptResults.length} />
+                      <Leaderboard brands={brandResults} />
                     </>
                   )}
                   {analyticsTab === 'prompts' && (

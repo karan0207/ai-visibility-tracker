@@ -27,6 +27,7 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
   // Sync with parent when initialBrands changes
   useEffect(() => {
     if (isActive) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBrands(initialBrands);
     }
   }, [initialBrands, isActive]);
@@ -91,7 +92,7 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
     // Compact sidebar mode - just the add brand input
     return (
       <div className="space-y-2 sm:space-y-3">
-        <div className="flex gap-1.5 sm:gap-2">
+        <div className="flex gap-2">
           <Input
             placeholder="Add brand..."
             value={brandInput}
@@ -100,16 +101,16 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
               setError(null);
             }}
             onKeyDown={handleKeyDown}
-            className="flex-1 h-7 sm:h-8 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 rounded-md"
+            className="flex-1 h-10 text-sm bg-white dark:bg-slate-800 rounded-lg border-2 border-slate-300 dark:border-slate-600 placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
-          <Button 
-            size="sm" 
-            variant="outline" 
+          <Button
+            size="sm"
+            variant="outline"
             onClick={addBrands}
             disabled={!brandInput.trim()}
-            className="h-7 sm:h-8 px-1.5 sm:px-2 rounded-md"
+            className="h-10 w-10 p-0 rounded-lg border-2 border-slate-300 dark:border-slate-600 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200"
           >
-            <Plus className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+            <Plus className="h-4 w-4" />
           </Button>
         </div>
         {error && (
@@ -139,34 +140,34 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
                   {brands.map((brand) => (
                     <Badge 
                       key={brand} 
-                      variant="secondary" 
-                      className="text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer group border border-slate-200"
+                      style={{ backgroundColor: '#62109F', color: '#fff', border: '1px solid #62109F' }}
+                      className="text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-md transition-colors cursor-pointer group shadow-sm"
                       onClick={() => removeBrand(brand)}
                     >
                       <span className="hidden sm:inline">{brand}</span>
                       <span className="inline sm:hidden text-xs">{brand.slice(0, 4)}</span>
-                      <X className="h-2.5 w-2.5 sm:h-3 sm:w-3 ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <X className="h-2.5 w-2.5 sm:h-3 sm:w-3 ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#fff' }} />
                     </Badge>
                   ))}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <Input
                 placeholder="Add..."
                 value={brandInput}
                 onChange={(e) => setBrandInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-24 sm:w-40 h-8 sm:h-9 text-xs sm:text-sm rounded-md bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                className="w-28 sm:w-36 h-10 text-sm rounded-lg bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
-              <Button 
-                size="sm" 
-                variant="outline" 
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={addBrands}
                 disabled={!brandInput.trim()}
-                className="h-8 sm:h-9 w-8 sm:w-9 p-0 rounded-md"
+                className="h-10 w-10 p-0 rounded-lg border-2 border-slate-300 dark:border-slate-600 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200"
               >
-                <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <Plus className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -205,12 +206,16 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
         </div>
 
         {/* Category Input */}
-        <div className="space-y-2 sm:space-y-3">
+        <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <Label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-0.5 sm:ml-1">
+            <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
               Product Category
             </Label>
-            <span className={`text-[10px] font-medium ${category.length > 50 ? 'text-amber-500' : 'text-slate-400'}`}>
+            <span className={`text-xs font-medium px-2 py-1 rounded-md ${
+              category.length > 50
+                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+            }`}>
               {category.length}/100
             </span>
           </div>
@@ -221,21 +226,25 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
               setCategory(e.target.value);
               setError(null);
             }}
-            className="h-9 sm:h-10 px-2.5 sm:px-3 text-sm rounded-lg bg-indigo-50/20 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 focus:border-purple-400 focus:ring-purple-200 focus:bg-white dark:focus:bg-slate-800 transition-all"
+            className="h-11 px-4 text-sm rounded-lg bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </div>
 
         {/* Brands Input */}
-        <div className="space-y-2 sm:space-y-3">
+        <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <Label className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-0.5 sm:ml-1">
+            <Label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
               Brands to Track
             </Label>
-            <span className={`text-[10px] font-medium ${brands.length >= 10 ? 'text-red-500' : 'text-slate-400'}`}>
+            <span className={`text-xs font-medium px-2 py-1 rounded-md ${
+              brands.length >= 10
+                ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+            }`}>
               {brands.length}/10 brands
             </span>
           </div>
-          <div className="flex gap-1.5 sm:gap-2">
+          <div className="flex gap-3">
             <Input
               placeholder="OpenAI, Claude, DeepSeek..."
               value={brandInput}
@@ -244,15 +253,15 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
                 setError(null);
               }}
               onKeyDown={handleKeyDown}
-              className="flex-1 h-9 sm:h-10 px-2.5 sm:px-3 text-sm rounded-lg bg-indigo-50/20 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 focus:border-purple-400 focus:ring-purple-200 focus:bg-white dark:focus:bg-slate-800 transition-all"
+              className="flex-1 h-11 px-4 text-sm rounded-lg bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
-            <Button 
-              type="button" 
-              onClick={addBrands} 
+            <Button
+              type="button"
+              onClick={addBrands}
               disabled={!brandInput.trim()}
               size="lg"
               variant="outline"
-              className="h-9 sm:h-10 px-2 sm:px-4 rounded-lg border-slate-200 hover:bg-slate-50 hover:text-slate-900"
+              className="h-11 px-4 rounded-lg border-2 border-slate-300 dark:border-slate-600 hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -267,15 +276,16 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
 
           {/* Added brands */}
           {brands.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 p-3 sm:p-4 rounded-lg" style={{ background: '#f7f2fa', border: '1px solid #e5d0f7' }}>
               {brands.map((brand) => (
                 <Badge 
                   key={brand} 
-                  className="pl-2 sm:pl-3 pr-1.5 sm:pr-2 py-1 rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-all cursor-pointer group shadow-sm text-xs sm:text-sm"
+                  style={{ backgroundColor: '#62109F', color: '#fff', border: '1px solid #62109F' }}
+                  className="pl-2 sm:pl-3 pr-1.5 sm:pr-2 py-1 rounded-md transition-all cursor-pointer group shadow-sm text-xs sm:text-sm"
                   onClick={() => removeBrand(brand)}
                 >
                   {brand}
-                  <X className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 ml-1 sm:ml-2 text-slate-400 group-hover:text-red-500 transition-colors" />
+                  <X className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 ml-1 sm:ml-2" style={{ color: '#fff' }} />
                 </Badge>
               ))}
             </div>
@@ -291,7 +301,7 @@ export function SessionSetup({ onStart, onBrandsChange, initialBrands = [], init
           onClick={handleStart}
           disabled={brands.length < 1 || disabled}
           size="lg"
-          className="w-full h-10 sm:h-12 rounded-lg text-xs sm:text-sm font-semibold bg-gradient-brand text-white shadow-md transition-all duration-200"
+          className="w-full h-10 sm:h-12 rounded-lg text-xs sm:text-sm font-semibold bg-[linear-gradient(to_right,#1a0022_0%,#6b46c1_51%,#1a0022_100%)] bg-[length:200%_auto] hover:bg-[position:right_center] hover:shadow-xl hover:shadow-purple-500/25 text-white shadow-md transition-all duration-500"
         >
           <span className="flex items-center gap-2">
             {disabled ? 'Creating Session...' : 'Start Analysis Session'}

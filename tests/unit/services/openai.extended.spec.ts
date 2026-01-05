@@ -10,15 +10,17 @@ jest.mock('openai', () => {
       },
     },
   }));
-  
+
   // Mock APIError class
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   (MockOpenAI as any).APIError = class APIError extends Error {
-    constructor(public status: number, public error: any, message: string, public headers: Headers) {
+    constructor(public status: number, public error: unknown, message: string, public headers: Headers) {
       super(message);
       this.name = 'APIError';
     }
   };
-  
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
   return MockOpenAI;
 });
 
@@ -39,10 +41,12 @@ describe('openai service - extended coverage', () => {
       process.env.AI_PROVIDER = 'xai';
       process.env.XAI_API_KEY = 'xai-test-key';
       createAIClient();
-      expect(OpenAI).toHaveBeenCalledWith({ 
-        baseURL: 'https://api.x.ai/v1', 
-        apiKey: 'xai-test-key' 
-      });
+      expect(OpenAI).toHaveBeenCalledWith(
+        expect.objectContaining({
+          baseURL: 'https://api.x.ai/v1',
+          apiKey: 'xai-test-key',
+        })
+      );
     });
 
     it('throws when xAI key missing', () => {
@@ -55,10 +59,12 @@ describe('openai service - extended coverage', () => {
       process.env.AI_PROVIDER = 'google';
       process.env.GOOGLE_API_KEY = 'google-test-key';
       createAIClient();
-      expect(OpenAI).toHaveBeenCalledWith({ 
-        baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/', 
-        apiKey: 'google-test-key' 
-      });
+      expect(OpenAI).toHaveBeenCalledWith(
+        expect.objectContaining({
+          baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+          apiKey: 'google-test-key',
+        })
+      );
     });
 
     it('uses custom Google model from env', () => {
@@ -91,14 +97,14 @@ describe('openai service - extended coverage', () => {
       const apiError = new OpenAI.APIError(404, { message: 'model not found' }, 'Not Found', new Headers());
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockRejectedValue(apiError);
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('not found');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('not found');
     });
 
     it('handles 429 rate limit error', async () => {
       const apiError = new OpenAI.APIError(429, { message: 'rate limit' }, 'Too Many Requests', new Headers());
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockRejectedValue(apiError);
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('Rate limit exceeded');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('Rate limit exceeded');
     });
 
     it('handles 500 server error', async () => {
@@ -106,7 +112,7 @@ describe('openai service - extended coverage', () => {
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockRejectedValue(apiError);
 
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('AI service error');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('service is temporarily unavailable');
     });
 
     it('handles JSON parsing errors', async () => {
@@ -114,7 +120,7 @@ describe('openai service - extended coverage', () => {
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockRejectedValue(jsonError);
 
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('invalid response');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('Invalid response from');
     });
 
     it('passes through unknown errors', async () => {
@@ -122,7 +128,7 @@ describe('openai service - extended coverage', () => {
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockRejectedValue(unknownError);
 
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('Unknown error occurred');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('Unknown error occurred');
     });
 
     it('handles empty choices array', async () => {
@@ -130,7 +136,7 @@ describe('openai service - extended coverage', () => {
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockResolvedValue(mockResponse);
 
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('AI returned an empty response');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('AI returned an empty response');
     });
 
     it('handles undefined message', async () => {
@@ -138,7 +144,7 @@ describe('openai service - extended coverage', () => {
       const instance = new (OpenAI as jest.MockedClass<typeof OpenAI>)({ apiKey: 'test' });
       (instance.chat.completions.create as jest.Mock).mockResolvedValue(mockResponse);
 
-      await expect(queryAI(instance, 'prompt')).rejects.toThrow('AI returned an empty response');
+      await expect(queryAI(instance, 'prompt', { retries: 0 })).rejects.toThrow('AI returned an empty response');
     });
   });
 

@@ -14,7 +14,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 describe('Leaderboard - extended coverage', () => {
-  const createBrand = (name: string, coverage: number, rank?: number): BrandResult => ({
+  const createBrand = (name: string, coverage: number): BrandResult => ({
     name,
     promptCoverage: coverage,
     mentionShare: coverage / 2,

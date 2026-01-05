@@ -51,22 +51,26 @@ export function MetricsPanel({ totalPrompts, totalMentions, brands, confidenceLe
     b.promptCoverage * 10000 + b.mentionShare * 100 + b.mentionsPerPrompt;
 
   // Find the brand(s) with the highest score
-  let maxScore = -Infinity;
-  let leaders: BrandResult[] = [];
-  for (const b of brands) {
-    const score = getBrandScore(b);
-    if (score > maxScore) {
-      maxScore = score;
-      leaders = [b];
-    } else if (score === maxScore) {
-      leaders.push(b);
+    let maxScore = -Infinity;
+    let leaders: BrandResult[] = [];
+    for (const b of brands) {
+      const score = getBrandScore(b);
+      if (score > maxScore) {
+        maxScore = score;
+        leaders = [b];
+      } else if (score === maxScore) {
+        leaders.push(b);
+      }
     }
-  }
 
-  const leadingBrandDisplay = leaders.length > 1
-    ? `${leaders.map(b => b.name).join(', ')} (tied)`
-    : leaders[0]?.name || '—';
-  const topBrand = leaders[0];
+    // If all brands have zero coverage and mentions, show dash
+    const allZero = brands.length === 0 || brands.every(b => b.promptCoverage === 0 && b.mentions === 0);
+    const leadingBrandDisplay = allZero
+      ? '—'
+      : (leaders.length > 1
+        ? `${leaders.map(b => b.name).join(', ')} (tied)`
+        : leaders[0]?.name || '—');
+    const topBrand = allZero ? undefined : leaders[0];
 
   const metrics = [
     {

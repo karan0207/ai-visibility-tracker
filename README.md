@@ -1,264 +1,224 @@
 # AI Visibility Tracker
 
-A competitive intelligence tool that measures brand presence in AI-generated responses.
+> Know where your brand stands in AI-generated recommendations.
 
-![AI Visibility Tracker](https://img.shields.io/badge/Next.js-16-black?logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38B2AC?logo=tailwindcss) ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black?logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-38B2AC?logo=tailwindcss) ![React](https://img.shields.io/badge/React-19.2.3-61DAFB?logo=react)
 
-## Problem Statement
+## 🎯 What This Tool Does
 
-**When users ask AI systems for recommendations, brands compete for inclusion in a synthesized answer—not clicks or rankings.**
+**When people ask AI for recommendations, brands compete to be mentioned in the answer—not clicks or rankings.**
 
-The core problem is measuring **brand presence**, **dominance**, and **absence** across representative AI prompts that reflect real user intent.
+This tool helps you see:
+- ✅ **Does your brand show up?** – Are you even in the conversation?
+- 📊 **How strong is your presence?** – How much attention do you get compared to competitors?
+- ❌ **Where are you invisible?** – Which prompts never mention you?
 
-The metrics must answer three questions:
-1. **Do we show up at all?**
-2. **How strong is our presence compared to competitors?**
-3. **Where are we invisible?**
+It's not about claiming "we're winning." It's about understanding **how AI perceives your brand** and where that perception falls short.
 
-Everything else is secondary.
+## ✨ What You Can Do
 
-This tool is not saying "We are winning." It is saying: **"Here is how AI currently perceives us, and where that perception breaks down."**
+- 💬 **Chat with AI** – Ask questions naturally and see which brands get mentioned in real-time
+- 📋 **Batch Analysis** – Run multiple prompts at once to get a complete picture
+- 📊 **Track Metrics Live** – Watch the dashboard update as results come in
+- 🏆 **Compare Competitors** – See who's winning the AI attention war
+- 📜 **Review History** – Look back at past prompts and see what changed
+- 🔗 **Follow Citations** – See which sources influence AI's recommendations
+- 🤖 **Switch AI Models** – Use GPT-4o, Gemini, xAI (Grok), or Claude
 
-## Features
+## 🛠️ What's Under the Hood
 
-- **Interactive Chat Analysis**: Conversational interface to ask AI questions and track brand mentions in real-time
-- **Session-Based Tracking**: Create analysis sessions for specific product categories with multiple competitor brands
-- **Real-Time Metrics Dashboard**: 
-  - **Prompts Analyzed**: Total AI queries tested
-  - **Total Mentions**: Brand references found across all responses
-  - **Average Visibility**: Percentage visibility across all tracked brands
-  - **Leading Brand**: Top performer with mention count
-- **Brand Leaderboard**: Compare visibility across competitors with metrics like mention count, visibility %, citation share, and first mentions
-- **Prompt History**: See exactly which prompts mention your brand and which don't, with full AI responses
-- **Citation Tracking**: Track URLs and sources cited by the AI to understand what influences responses
-- **Persistent Sessions**: All analysis sessions saved to PostgreSQL for historical tracking
+- **Frontend**: Next.js 16 + React 19 + TypeScript
+- **UI**: Radix UI + Tailwind CSS 4
+- **Database**: PostgreSQL (running in Docker)
+- **AI**: OpenAI, Google, xAI (Grok), or Anthropic (Claude)
+- **Testing**: Jest + Playwright
 
-## Tech Stack
+## 🚀 Quick Start
 
-- **Frontend**: Next.js 16 (App Router) + React 19 + TypeScript
-- **UI Components**: Radix UI + Tailwind CSS 4
-- **Database**: PostgreSQL 16 (Docker)
-- **ORM**: Prisma 6
-- **AI**: OpenAI GPT-4o
-- **Validation**: Zod
-- **Charts**: Recharts
+**Get up and running in 5 minutes.**
 
-## Quick Start
+### What You'll Need
 
-### Prerequisites
-
-- Node.js 18+
+- Node.js 18 or higher
 - Docker & Docker Compose
-- OpenAI API Key
+- An AI API key (we support OpenAI, Google, xAI, and Anthropic)
 
-### 1. Clone and Install
+### Step-by-Step Setup
 
 ```bash
-cd ai-visibility-tracker
+# 1. Install dependencies
 npm install
-```
 
-### 2. Start PostgreSQL
-
-```bash
+# 2. Start the database (PostgreSQL)
 docker-compose up -d
-```
 
-### 3. Set Up Environment
-
-```bash
-# Copy example env file
+# 3. Set up your environment
 cp .env.example .env
+# Edit .env and add your AI provider and API key
+# We recommend Google Gemini for a good balance of speed and quality
 
-# Edit .env and add your OpenAI API key
-# DATABASE_URL is already configured for local Docker
-```
-
-### 4. Run Database Migrations
-
-```bash
+# 4. Set up the database
 npx prisma migrate dev
-```
 
-### 5. Start Development Server
-
-```bash
+# 5. Start the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to use the app.
+🎉 **Open [http://localhost:3000](http://localhost:3000) to start tracking!**
 
-## Usage
+### Run Tests
 
-1. **Create a Session**: Enter a product category (e.g., "CRM software") and add brands to track (e.g., "Salesforce, HubSpot, Pipedrive, Zoho")
-2. **Start Chatting**: Use the chat interface to ask questions about the category
-3. **View Results**: The dashboard updates in real-time showing:
-   - Which brands were mentioned in each response
-   - Visibility metrics and comparisons
-   - Brand leaderboard rankings
-4. **Analyze Patterns**: Review prompt history to understand what types of questions favor which brands
+```bash
+npm test        # Unit tests
+npm run test:e2e  # End-to-end tests
+```
+
+## 🎮 How to Use
+
+1. **Create a Session** – Pick a category (like "CRM software") and list your competitors (Salesforce, HubSpot, Pipedrive, Zoho)
+2. **Start Analyzing** – Choose your style:
+   - **Chat Mode** – Ask questions one by one and see results instantly
+   - **Batch Mode** – Run multiple prompts at once for a comprehensive view
+3. **Explore Results** – Watch as the dashboard fills up with insights
+4. **Find Patterns** – Look at which questions mention you and which don't
+
+## 📈 Understanding Your Metrics
 
 ## Key Metrics
 
-### Metric 1: Prompt Coverage (Presence Visibility) ✅ PRIMARY
+### 1️⃣ Prompt Coverage – **Are you even in the game?**
 
 | | |
 |---|---|
-| **Definition** | Percentage of prompts where a brand is mentioned at least once |
-| **Formula** | `prompts_with_brand / total_prompts` |
-| **Why it matters** | Binary reality check. If coverage is low, nothing else matters. Closest analog to "existence" in AI answers. |
-| **Interpretation** | 100% = consistently top-of-mind · <30% = mostly invisible |
+| **What it means** | How often your brand gets mentioned, period |
+| **How it's calculated** | Prompts with your brand ÷ Total prompts |
+| **Why you care** | This is your reality check. If it's low, nothing else matters. |
+| **What to aim for** | 100% = always remembered · <30% = mostly invisible |
 
-### Metric 2: Mention Share (Relative Dominance)
-
-| | |
-|---|---|
-| **Definition** | Share of total brand mentions captured by a brand across all prompts |
-| **Formula** | `brand_mentions / total_mentions_across_all_brands` |
-| **Why it matters** | AI answers often mention multiple brands. Measures how much of the conversation you own. |
-| **Caveat** | High mention share with low prompt coverage = noisy dominance. Must read alongside Prompt Coverage. |
-
-### Metric 3: Mentions per Prompt (Depth of Presence)
+### 2️⃣ Mention Share – **How much of the conversation do you own?**
 
 | | |
 |---|---|
-| **Definition** | Average number of times a brand is mentioned within prompts where it appears |
-| **Formula** | `brand_mentions / prompts_with_brand` |
-| **Why it matters** | Distinguishes casual name-drop (~1.0) from reinforced/emphasized brand (>1.5). Quality-of-mention metric without sentiment analysis. |
+| **What it means** | Your share of all brand mentions across every prompt |
+| **How it's calculated** | Your mentions ÷ Total mentions from all brands |
+| **Why you care** | AI often mentions multiple brands. This shows how much attention you capture. |
+| **Watch out for** | High share + low coverage = noisy dominance. Always check coverage first. |
 
-### Metric 4: First-Mention Rate (AI Preference Signal)
-
-| | |
-|---|---|
-| **Definition** | Percentage of prompts where the brand is mentioned first among competitors |
-| **Formula** | `first_mentions / prompts_with_brand` |
-| **Why it matters** | LLMs usually list the most salient or "default" option first. Approximates AI preference, not just inclusion. |
-| **Caveat** | Directional, not definitive. Should never stand alone. |
-
-### Metric 5: Missed Prompts (Invisibility Map)
+### 3️⃣ Mentions per Prompt – **Are you a one-time mention or a recurring star?**
 
 | | |
 |---|---|
-| **Definition** | Number and percentage of prompts where the brand is NOT mentioned |
-| **Formula** | `total_prompts - prompts_with_brand` |
-| **Why it matters** | The actionable metric. Tells marketing and content teams where to focus. |
-| **Example insight** | "Brand X is invisible in 'affordable tools' prompts but appears in 'enterprise' prompts." |
+| **What it means** | How many times you're mentioned in prompts where you appear |
+| **How it's calculated** | Your total mentions ÷ Prompts where you appear |
+| **Why you care** | ~1.0 = casual mention · >1.5 = reinforced presence |
+| **Quick insight** | Distinguishes a quick name-drop from a brand that gets emphasized |
 
-This metric flips the mindset from bragging to fixing.
+### 4️⃣ First-Mention Rate – **Does AI think of you first?**
 
-### Sample-Size Confidence Rules
+| | |
+|---|---|
+| **What it means** | How often your brand appears first among competitors |
+| **How it's calculated** | First mentions ÷ Prompts where you appear |
+| **Why you care** | LLMs tend to list the "default" option first. This is a preference signal. |
+| **Important** | Directional only. Use this alongside other metrics, not alone. |
 
-| Prompts | Confidence Level | Interpretation |
-|---------|-----------------|----------------|
-| < 5 | 🔴 Low | Metrics are exploratory |
-| 5-29 | 🟡 Directional | Metrics indicate trends |
-| ≥ 30 | 🟢 High | Metrics are comparable |
+### 5️⃣ Missed Prompts – **Where are you invisible?**
 
-## Project Structure
+| | |
+|---|---|
+| **What it means** | How many prompts don't mention you at all |
+| **How it's calculated** | Total prompts - Prompts where you appear |
+| **Why you care** | **This is your action plan.** Tells you exactly where to improve. |
+| **Example insight** | "Invisible in 'affordable tools' prompts, but strong in 'enterprise' prompts." |
+
+> 💡 **Pro tip**: This metric flips your mindset from bragging to fixing.
+
+---
+
+### 🎯 Sample Size Matters
+
+| Prompts | Confidence | What it means |
+|---------|------------|---------------|
+| < 5 | 🔴 Low | Just exploring |
+| 5-29 | 🟡 Directional | See some trends |
+| 30+ | 🟢 High | Solid comparison |
+
+**Golden rule**: More prompts = more confidence. Don't make big decisions based on 3 queries.
+
+## 📁 Project Structure
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   │   ├── chat/          # POST: Send chat message, get AI response with brand tracking
-│   │   ├── session/       # POST: Create session, GET: Fetch session data
-│   │   ├── history/       # GET: Fetch past analyses
-│   │   └── analyze/       # Legacy batch analysis endpoint
-│   ├── dashboard/         # Dashboard page with metrics and chat
-│   └── page.tsx           # Session setup page
-├── components/
-│   ├── ui/                # UI primitives (button, card, input, etc.)
-│   ├── chat/              # ChatInterface, SessionSetup
-│   ├── dashboard/         # MetricsPanel, Leaderboard, PromptList, CitedPages
-│   ├── forms/             # AnalysisForm
-│   ├── layout/            # Header, Footer
-│   └── shared/            # LoadingState, ErrorAlert
-├── services/              # OpenAI client, analyzer logic
-├── db/                    # Prisma client, queries
-├── lib/                   # Constants, utilities
-└── types/                 # TypeScript definitions
+├── app/           # Next.js pages and API routes
+├── components/    # React components (UI, chat, dashboard, forms)
+├── services/      # AI client and analysis logic
+├── db/            # Database client and queries
+├── lib/           # Utilities and constants
+└── types/         # TypeScript definitions
 ```
 
-## Key Design Decisions
+## 💡 Design Philosophy
 
-1. **Chat-Based Interface**: Interactive chat allows natural exploration of AI responses vs. batch processing
-2. **Session-Based Analysis**: Each session tracks a specific category and brand set for focused comparison
-3. **Real-Time Updates**: Dashboard metrics update immediately as new prompts are analyzed
-4. **Strict Exact Match**: Brand detection uses case-insensitive exact word matching to avoid false positives
-5. **Server-Side API Key**: OpenAI key stored server-side with option to configure via environment
-6. **PostgreSQL Persistence**: All sessions and analyses saved for historical tracking and trend analysis
+We made a few key choices to keep things simple and useful:
 
-## Contribution Guidelines
+- **Chat first** – Natural exploration beats rigid forms
+- **Sessions stay focused** – Each session tracks one category and specific competitors
+- **Real-time updates** – Watch metrics change as you run queries
+- **Accurate detection** – Exact matching prevents false positives (no fuzzy matching drama)
+- **Secure by default** – API keys live on the server, never in the browser
+- **Save everything** – PostgreSQL keeps your data for future analysis and trends
 
-**Improve the AI Visibility Tracker by prioritizing clarity of measurement over metric count.**
+## 🤝 Contributing
 
-Each metric must:
-- Answer a specific product question (presence, dominance, or absence)
-- Be interpretable without statistical knowledge
-- Avoid overstating confidence at low sample sizes
+**Help us make AI visibility tracking clearer and more useful.**
 
-When adding new metrics:
-- Prefer normalized, per-prompt values over raw counts
-- Separate presence metrics from share metrics
-- Always preserve the raw prompt-to-response mapping
+When adding features or metrics, ask yourself:
 
-**Do not introduce ranking-style scores or composite indexes unless their components are fully visible and explainable.**
+- Does this answer a real business question? (Presence, dominance, or absence)
+- Can anyone understand it without a statistics degree?
+- Are we being honest about confidence levels at small sample sizes?
 
-Optimize for decision-making, not vanity numbers.
+**Guidelines for new metrics:**
 
-## Future Improvements
+- ✅ Prefer normalized values (per prompt) over raw counts
+- ✅ Separate presence from share – they tell different stories
+- ✅ Keep the raw data accessible – prompt-to-response mapping matters
+- ❌ Avoid "magic numbers" or composite scores without showing the math
 
-- **Sentiment Analysis**: Detect if brand mentions are positive, negative, or neutral
-- **Trend Charts**: Show visibility changes over time with interactive charts
-- **Export**: PDF/CSV export of analysis results
-- **Multi-Model Support**: Compare results across GPT-4, Claude, Gemini, and other AI models
-- **Brand Aliases**: Support fuzzy matching (e.g., "SFDC" → "Salesforce")
-- **Scheduled Analysis**: Automated periodic checks to track visibility trends
-- **Webhook Notifications**: Alert when brand visibility changes significantly
+> **Rule of thumb**: Optimize for decision-making, not vanity numbers.
 
-## API Reference
+We welcome pull requests, issues, and ideas! 🎉
 
-### POST /api/session
+## 🚀 What's Coming Next
 
-Create a new analysis session.
+We have big plans for AI Visibility Tracker. Here's what we're working on:
 
-```json
-{
-  "category": "CRM software",
-  "brands": ["Salesforce", "HubSpot", "Pipedrive", "Zoho"]
-}
-```
+- 🎭 **Sentiment Analysis** – Are mentions positive, negative, or neutral?
+- 📈 **Trend Charts** – See how your visibility changes over time
+- 📄 **Export Options** – Download reports as PDF or CSV
+- 🔄 **Brand Aliases** – Handle variations like "SFDC" → "Salesforce"
+- ⏰ **Scheduled Checks** – Automated periodic analysis
+- 🔔 **Smart Alerts** – Get notified when visibility shifts
 
-### GET /api/session?id={sessionId}
+Have ideas? We'd love to hear them!
 
-Get session data including brands, prompts, and metrics.
+## 🔌 API Endpoints
 
-### POST /api/chat
+All endpoints are REST APIs. Here's what's available:
 
-Send a prompt and get AI response with brand tracking.
+**Sessions & History**
+- `POST /api/session` – Create a new analysis session
+- `GET /api/session?id={sessionId}` – Get session data
+- `GET /api/history` – List all analyses
+- `GET /api/history/[id]` – Get a specific analysis
 
-```json
-{
-  "prompt": "What is the best CRM for small businesses?",
-  "brands": ["Salesforce", "HubSpot", "Pipedrive", "Zoho"],
-  "sessionId": "session-id"
-}
-```
+**Analysis**
+- `POST /api/chat` – Single prompt analysis
+- `POST /api/analyze` – Batch analysis (auto-generated prompts)
+- `POST /api/analyze-multi` – Batch with custom prompts
+- `POST /api/analyze-stream` – Streaming batch with real-time updates
 
-### GET /api/history
-
-List recent analyses.
-
-### GET /api/history/[id]
-
-Get a specific analysis by ID.
-
-## Environment Variables
-
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ai_visibility_tracker?schema=public"
-OPENAI_API_KEY="sk-..."
-```
+See the source code in `src/app/api/` for full details and examples.
 
 ## License
 

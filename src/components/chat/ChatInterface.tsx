@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import './ChatInterface.css';
 import { ErrorAlert } from '@/components/shared';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Send, Sparkles, User, Bot, CheckCircle2, Loader2 } from 'lucide-react';
-import type { ChatMessage, BrandResult } from '@/types/analysis';
+import { Send, Sparkles, User, Bot, CheckCircle2, Loader2, Copy } from 'lucide-react';
+import type { ChatMessage } from '@/types/analysis';
 
 interface ChatInterfaceProps {
   brands: string[];
@@ -41,10 +42,11 @@ export function ChatInterface({
     const currentPrompt = prompt.trim();
     setPrompt('');
     setError(null);
+    
     try {
       await onSendMessage(currentPrompt);
-    } catch (err: any) {
-      setError(err?.message || 'An error occurred');
+    } catch (err: unknown) {
+      setError((err as Error)?.message || 'An error occurred');
     }
   };
 
@@ -56,242 +58,320 @@ export function ChatInterface({
   };
 
   return (
-    <Card className="border border-slate-200 shadow-sm bg-white dark:bg-slate-900 flex flex-col h-full rounded-xl overflow-hidden">
-      <CardContent className="p-0 flex flex-col h-full overflow-hidden bg-gradient-to-b from-white dark:from-slate-900 to-slate-50/50 dark:to-slate-950/50">
-        {/* Error Alert */}
-        {error && (
-          <div className="px-3 sm:px-6 pt-3 sm:pt-4">
-            <ErrorAlert message={error} />
-          </div>
-        )}
-        {/* Messages Area */}
-        <div data-testid="messages-area" className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-6 pb-6 sm:pb-6 space-y-4 sm:space-y-5 scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none]">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center py-12">
-              <div className="p-5 rounded-full bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30 mb-6">
-                <Sparkles className="h-10 w-10 text-indigo-400 dark:text-indigo-300" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-                Ready to Analyze
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xs leading-relaxed">
-                Ask questions about your brands. We&apos;ll track mentions and update metrics in real-time.
-              </p>
-              {brands.length > 0 && (
-                <div data-testid="tracked-brands" className="flex flex-wrap gap-2 mt-8 justify-center">
-                  {brands.map((brand) => (
-                    <Badge key={brand} variant="secondary" className="text-xs px-3 py-1.5 rounded-full bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border-0 font-medium">
-                      ✓ {brand}
-                    </Badge>
-                  ))}
-                </div>
-              )}
+    <div className="flex-1 flex flex-col max-w-none lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto w-full h-full">
+      <Card className="border-0 shadow-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl flex flex-col h-full rounded-3xl overflow-hidden">
+        <CardContent className="p-0 flex flex-col h-full overflow-hidden">
+          
+          {/* Error Alert */}
+          {error && (
+            <div className="px-6 sm:px-8 pt-6 sm:pt-8">
+              <ErrorAlert message={error} />
             </div>
-          ) : (
-            messages.map((message) => (
-              <MessageBubble key={message.id} message={message} brands={brands} />
-            ))
           )}
-          {isLoading && (
-            <div className="flex gap-3 items-end animate-in fade-in slide-in-from-bottom-2">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm">
-                <Bot className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 backdrop-blur-sm">
-                <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '300ms' }}></span>
+          
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto no-scrollbar p-6 sm:p-8 space-y-8 sm:space-y-10">
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center py-20">
+                <h2 className="text-2xl font-medium text-slate-800 dark:text-slate-100 mb-4">
+                  AI-Powered Brand Intelligence
+                </h2>
+                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mb-10">
+                  Transform your brand strategy with real-time insights, competitive analysis, and market intelligence powered by advanced AI.
+                </p>
+                {brands.length > 0 && (
+                  <div className="flex flex-wrap gap-4 justify-center max-w-3xl">
+                    {brands.map((brand) => (
+                      <Badge 
+                        key={brand} 
+                        className="text-base px-5 py-3 rounded-full bg-white dark:bg-slate-900 border border-gray-300 dark:border-gray-500 text-slate-800 dark:text-slate-200"
+                      >
+                        <CheckCircle2 className="h-5 w-5 mr-3 text-emerald-500" />
+                        {brand}
+                      </Badge>
+                    ))}
                   </div>
-                  <span className="font-medium">Analyzing...</span>
+                )}
+              </div>
+            ) : (
+              messages.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))
+            )}
+            
+            {isLoading && (
+              <div className="flex gap-6 items-end">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-600 flex items-center justify-center shadow-xl">
+                  <Bot className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex-1 bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-gray-700 p-6 shadow-xl">
+                  <div className="flex items-center gap-4">
+                    <div className="flex gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '200ms' }}></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '400ms' }}></span>
+                    </div>
+                    <span className="text-slate-600 dark:text-slate-300">
+                      Analyzing your query...
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
 
-        {/* Input Area */}
-        <div className="px-3 sm:px-6 pb-3 sm:pb-4 pt-3 sm:pt-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-          <form onSubmit={handleSubmit} className="relative flex flex-col gap-3">
-            <div className="flex items-end gap-2 p-3 bg-slate-50 dark:bg-slate-800/70 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-indigo-500/30 focus-within:border-indigo-500 transition-all">
-              <Textarea
-                ref={textareaRef}
-                placeholder={disabled ? "Set up brands first..." : "Ask questions about your brands..."}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isLoading || disabled}
-                rows={1}
-                className="flex-1 min-h-[36px] sm:min-h-[44px] max-h-32 py-2 sm:py-3 px-1 resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                style={{ height: 'auto', overflow: 'hidden' }}
-                onInput={(e) => {
-                  const target = e.target as HTMLTextAreaElement;
-                  target.style.height = 'auto';
-                  target.style.height = `${Math.min(target.scrollHeight, 128)}px`;
-                }}
-              />
-              <Button
-                type="submit"
-                disabled={!prompt.trim() || isLoading || disabled}
-                size="icon"
-                className="h-9 w-9 rounded-xl flex-shrink-0 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-sm transition-all disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Send className="h-5 w-5" />
-                )}
-              </Button>
-            </div>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center font-medium uppercase tracking-wide">
-              ↵ Send • Shift+↵ New line
-            </p>
-          </form>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Input Area */}
+          <div className="px-6 sm:px-8 pb-6 pt-4 bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800">
+            <form onSubmit={handleSubmit} className="relative">
+              <div className="flex items-end gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-400 transition-all">
+                <Textarea
+                  ref={textareaRef}
+                  placeholder={disabled ? "Set up brands first..." : "Ask about market trends, competitor analysis, brand performance..."}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={isLoading || disabled}
+                  rows={1}
+                  className="flex-1 min-h-[48px] max-h-40 py-3 px-2 resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none text-base placeholder:text-slate-400"
+                  style={{ height: 'auto', overflow: 'hidden' }}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = 'auto';
+                    target.style.height = `${Math.min(target.scrollHeight, 160)}px`;
+                  }}
+                />
+                <Button
+                  type="submit"
+                  disabled={!prompt.trim() || isLoading || disabled}
+                  size="icon"
+                  className="h-10 w-10 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg hover:shadow-xl disabled:opacity-50 transition-all"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Send className="h-5 w-5" />
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
-}
-
-interface MessageBubbleProps {
-  message: ChatMessage;
-  brands: string[];
 }
 
 /**
  * Simple markdown renderer for chat messages
  */
-function renderChatMarkdown(text: string): React.ReactNode {
+function renderMarkdown(text: string): React.ReactNode {
   const lines = text.split('\n');
   const elements: React.ReactNode[] = [];
   
-  lines.forEach((line, lineIndex) => {
-    let processedLine: React.ReactNode = line;
+  lines.forEach((line, index) => {
+    // Headers
+    const headerMatch = line.match(/^(#{1,6})\s+(.+)$/);
+    if (headerMatch) {
+      const level = headerMatch[1].length;
+      const content = headerMatch[2];
+      elements.push(
+        React.createElement(`h${level}`, { key: index, className: "font-semibold my-2" }, renderInline(content))
+      );
+      return;
+    }
     
-    // Handle bullet lists
+    // Bullet lists
     if (line.match(/^\s*[-*]\s/)) {
       const content = line.replace(/^\s*[-*]\s/, '');
-      processedLine = (
-        <span key={lineIndex} className="flex gap-2">
-          <span className="opacity-50">•</span>
-          <span>{renderInlineMarkdown(content)}</span>
-        </span>
+      elements.push(
+        <div key={index} className="flex gap-2 my-1">
+          <span>•</span>
+          <span>{renderInline(content)}</span>
+        </div>
       );
-    }
-    // Handle numbered lists
-    else if (line.match(/^\s*\d+\.\s/)) {
-      const match = line.match(/^(\s*\d+\.)\s(.*)$/);
-      if (match) {
-        processedLine = (
-          <span key={lineIndex} className="flex gap-2">
-            <span className="opacity-70 font-medium min-w-[1.5rem]">{match[1]}</span>
-            <span>{renderInlineMarkdown(match[2])}</span>
-          </span>
-        );
-      }
-    }
-    // Regular line with inline formatting
-    else {
-      processedLine = <span key={lineIndex}>{renderInlineMarkdown(line)}</span>;
+      return;
     }
     
+    // Numbered lists
+    if (line.match(/^\s*\d+\.\s/)) {
+      const match = line.match(/^(\s*\d+\.)\s(.*)$/);
+      if (match) {
+        elements.push(
+          <div key={index} className="flex gap-2 my-1">
+            <span className="font-semibold">{match[1]}</span>
+            <span>{renderInline(match[2])}</span>
+          </div>
+        );
+        return;
+      }
+    }
+    
+    // Regular line
     elements.push(
-      <div key={lineIndex} className={line === '' ? 'h-2' : ''}>
-        {processedLine}
+      <div key={index} className={line === '' ? 'h-2' : ''}>
+        {renderInline(line)}
       </div>
     );
   });
   
-  return <div className="space-y-1">{elements}</div>;
+  return <div>{elements}</div>;
 }
 
 /**
- * Render inline markdown (bold, italic)
+ * Render inline markdown (bold, italic, code, links)
  */
-function renderInlineMarkdown(text: string): React.ReactNode {
+function renderInline(text: string): React.ReactNode {
   const parts: React.ReactNode[] = [];
   let remaining = text;
-  let keyIndex = 0;
+  let key = 0;
   
   while (remaining.length > 0) {
-    // Bold: **text**
-    const boldMatch = remaining.match(/\*\*([^*]+)\*\*/);
+    // Inline code
+    const codeMatch = remaining.match(/`([^`]+)`/);
+    if (codeMatch && codeMatch.index !== undefined) {
+      if (codeMatch.index > 0) {
+        parts.push(remaining.substring(0, codeMatch.index));
+      }
+      parts.push(
+        <code key={key++} className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-sm font-mono">
+          {codeMatch[1]}
+        </code>
+      );
+      remaining = remaining.substring(codeMatch.index + codeMatch[0].length);
+      continue;
+    }
     
+    // Links
+    const linkMatch = remaining.match(/\[([^\]]+)\]\(([^)]+)\)/);
+    if (linkMatch && linkMatch.index !== undefined) {
+      if (linkMatch.index > 0) {
+        parts.push(remaining.substring(0, linkMatch.index));
+      }
+      parts.push(
+        <a 
+          key={key++} 
+          href={linkMatch[2]} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-indigo-600 dark:text-indigo-400 hover:underline"
+        >
+          {linkMatch[1]}
+        </a>
+      );
+      remaining = remaining.substring(linkMatch.index + linkMatch[0].length);
+      continue;
+    }
+    
+    // Bold
+    const boldMatch = remaining.match(/\*\*([^*]+)\*\*/);
     if (boldMatch && boldMatch.index !== undefined) {
-      // Add text before match
       if (boldMatch.index > 0) {
         parts.push(remaining.substring(0, boldMatch.index));
       }
-      parts.push(<strong key={keyIndex++} className="font-semibold">{boldMatch[1]}</strong>);
+      parts.push(<strong key={key++}>{boldMatch[1]}</strong>);
       remaining = remaining.substring(boldMatch.index + boldMatch[0].length);
-    } else {
-      parts.push(remaining);
-      break;
+      continue;
     }
+    
+    // Italic
+    const italicMatch = remaining.match(/\*([^*]+)\*/);
+    if (italicMatch && italicMatch.index !== undefined) {
+      if (italicMatch.index > 0) {
+        parts.push(remaining.substring(0, italicMatch.index));
+      }
+      parts.push(<em key={key++}>{italicMatch[1]}</em>);
+      remaining = remaining.substring(italicMatch.index + italicMatch[0].length);
+      continue;
+    }
+    
+    parts.push(remaining);
+    break;
   }
   
   return <>{parts}</>;
 }
 
-function MessageBubble({ message, brands }: MessageBubbleProps) {
+function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
 
   return (
-    <div data-testid={`message-${message.id}`} className={`flex gap-3 items-end group ${isUser ? 'flex-row-reverse' : ''}`}>
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-sm ${
+    <div className={`flex gap-4 items-end group ${isUser ? 'flex-row-reverse' : ''}`}>
+      {/* Avatar */}
+      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
         isUser 
-          ? 'bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800' 
+          ? 'bg-slate-300 dark:bg-slate-600' 
           : 'bg-gradient-to-br from-indigo-500 to-violet-600'
       }`}>
         {isUser ? (
-          <User className={`h-4 w-4 ${isUser ? 'text-slate-700 dark:text-slate-200' : 'text-white'}`} />
+          <User className="h-5 w-5 text-slate-700 dark:text-slate-200" />
         ) : (
-          <Bot className="h-4 w-4 text-white" />
+          <Bot className="h-5 w-5 text-white" />
         )}
       </div>
-      <div className={`flex-1 max-w-[85%] ${isUser ? 'flex flex-col items-end' : 'flex flex-col items-start'}`}>
-        <div data-testid={`message-content-${message.id}`} className={`text-sm leading-relaxed max-w-prose ${
+
+      {/* Message Content */}
+      <div className={`flex-1 max-w-[80%] ${isUser ? 'flex flex-col items-end' : ''}`}>
+        <div className={`rounded-2xl px-5 py-4 shadow-lg ${
           isUser 
-            ? 'bg-indigo-600 text-white rounded-3xl rounded-br-sm px-4 py-2.5 shadow-sm' 
-            : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-3xl rounded-bl-sm px-5 py-3 shadow-sm'
+            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-br-sm' 
+            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-sm'
         }`}>
-          <div className={`${isUser ? 'text-white' : ''}`}>
-            {isUser ? message.content : renderChatMarkdown(message.content)}
-          </div>
+          {isUser ? message.content : renderMarkdown(message.content)}
         </div>
         
-        {/* Show metrics for assistant messages */}
+        {/* Copy Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={copyToClipboard}
+          className="mt-2 h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          {copied ? (
+            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+          ) : (
+            <Copy className="h-4 w-4" />
+          )}
+        </Button>
+        
+        {/* Brand Mentions */}
         {!isUser && message.metrics && message.metrics.brandsMentioned.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2.5 ml-1">
+          <div className="flex flex-wrap gap-2 mt-3">
             {message.metrics.brandsMentioned.map((brand) => (
               <Badge 
                 key={brand} 
-                className={`text-xs py-1 px-2.5 border rounded-full font-medium transition-all ${
+                className={`text-sm px-3 py-1 rounded-full ${
                   message.metrics?.firstMention === brand
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800/50 dark:text-emerald-300'
-                    : 'bg-slate-100 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300'
+                    ? 'bg-emerald-100 text-emerald-700 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300'
+                    : 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300'
                 }`}
               >
-                {message.metrics?.firstMention === brand ? (
-                  <>
-                    <Sparkles className="h-3 w-3 mr-1 inline" />
-                    {brand}
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="h-3 w-3 mr-1.5 inline" />
-                    {brand}
-                  </>
+                {message.metrics?.firstMention === brand && (
+                  <Sparkles className="h-4 w-4 mr-1 inline" />
                 )}
+                {brand}
               </Badge>
             ))}
           </div>
         )}
         
-        <p className={`text-[9px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${isUser ? 'text-right pr-1 text-slate-400' : 'text-left pl-1 text-slate-400 dark:text-slate-500'}`}>
-          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        {/* Timestamp */}
+        <p className="text-xs text-slate-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {message.timestamp.toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          })}
         </p>
       </div>
     </div>

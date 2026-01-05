@@ -10,13 +10,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Medal, TrendingUp, ArrowUp, EyeOff } from 'lucide-react';
+import { Medal, TrendingUp } from 'lucide-react';
 import type { BrandResult } from '@/types/analysis';
-import { VISIBILITY_THRESHOLDS } from '@/lib/constants';
 
 interface LeaderboardProps {
   brands: BrandResult[];
-  totalPrompts: number;
 }
 
 function getRankDisplay(index: number) {
@@ -67,7 +65,7 @@ function getVisibilityBar(visibility: number, colorClass: string) {
   );
 }
 
-export function Leaderboard({ brands, totalPrompts }: LeaderboardProps) {
+export function Leaderboard({ brands }: LeaderboardProps) {
   if (brands.length === 0) {
     return (
       <Card className="border border-slate-200 shadow-sm bg-white dark:bg-slate-900 rounded-xl overflow-hidden">

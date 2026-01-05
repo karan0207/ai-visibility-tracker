@@ -46,21 +46,6 @@ export function HeroSection({ onStartTrial, onBookDemo }: HeroSectionProps) {
           competitors but not you.
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-          <button
-            onClick={onStartTrial}
-            className="h-12 sm:h-14 px-6 sm:px-8 rounded-full bg-white text-slate-950 font-semibold text-sm sm:text-base flex items-center gap-2 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1"
-          >
-            Start Free Trial
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          <button
-            onClick={onBookDemo}
-            className="h-12 sm:h-14 px-6 sm:px-8 rounded-full bg-white/10 text-white font-semibold text-sm sm:text-base border border-white/20 hover:bg-white/15 transition-all duration-300 hover:-translate-y-1"
-          >
-            Book a Demo
-          </button>
-        </div>
       </div>
 
       {/* Bottom Fade */}

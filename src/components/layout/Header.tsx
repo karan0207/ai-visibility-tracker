@@ -3,6 +3,7 @@
 import { BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export function Header() {
 
@@ -36,15 +37,12 @@ export function Header() {
         
         <div className="flex items-center gap-2 sm:gap-4">
           <Link href="/dashboard" className="inline-block">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="gap-1.5 sm:gap-2 h-9 sm:h-10 text-xs sm:text-sm border-slate-700 bg-slate-900/50 text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
-              type="button"
+            <Badge 
+              variant="secondary" 
+              className="bg-black text-white border border-white/20 shadow-sm"
             >
-              <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </Button>
+              Welcome
+            </Badge>
           </Link>
         </div>
       </div>

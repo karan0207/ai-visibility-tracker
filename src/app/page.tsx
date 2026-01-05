@@ -134,17 +134,6 @@ export default function Home() {
 
   const isLoading = isCreating || isAnalyzing;
 
-  const handleStartTrial = () => {
-    // Scroll to form or trigger session setup
-    const element = document.querySelector('[data-tab-trigger="single"]');
-    element?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleBookDemo = () => {
-    // You can implement demo booking logic here
-    console.log('Book demo clicked');
-  };
-
   return (
     <div className="min-h-screen flex flex-col font-sans">
       {/* Main gradient background wrapper */}
@@ -167,7 +156,7 @@ export default function Home() {
       
       {/* Modern Hero Section */}
       
- <HeroSection onStartTrial={handleStartTrial} onBookDemo={handleBookDemo} />
+ <HeroSection />
       
      
       
